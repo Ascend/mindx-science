@@ -1,0 +1,131 @@
+# !usr/bin/env python
+# -*- coding:utf-8 _*-
+
+# import sys
+# sys.path.append(r"F:\\0-code\\pinnwor")
+# print(sys.path)
+
+import json
+import time
+import numpy as np
+
+from mindspore.common import *
+from mindspore import context
+import mindspore.nn as nn
+from mindspore.train import DynamicLossScaleManager
+from mindspore.train.callback import ModelCheckpoint, CheckpointConfig
+from mindspore.train.serialization import load_checkpoint, load_param_into_net
+import mindspore.common.dtype as mstype
+from mindspore.common.initializer import *
+from mindspore import Tensor,Parameter
+
+from pinn.solver import LossAndTimeMonitor
+from pinn.common import L2
+from pinn.architecture import MultiScaleFCCell, MTLWeightedLossCell, FCSequential
+from pinn.solver import SupervisedSolver
+from pinn.loss import SupervisedConstraints
+from pinn.common.lr_scheduler import MultiStepLR
+
+from src import create_train_dataset
+from src.dataset import test_data_prepare
+from src.callback import PredictCallback, GetVariableCallback
+from src.NS import NS_equation
+
+set_seed(123456)
+np.random.seed(123456)
+
+def train(config):
+
+    # 动态图or静态图
+    context.set_context(mode=context.GRAPH_MODE, save_graphs=True, device_target=config["device_target"],
+                        device_id=config["device_id"], save_graphs_path="./graph")
+
+    """创建数据集"""
+
+    elec_train_dataset = create_train_dataset(config)
+
+    train_dataset = elec_train_dataset.create_dataset(batch_size=config["train_batch_size"], prebatched_data=True,shuffle=False)
+
+    steps_per_epoch = len(elec_train_dataset)
+
+
+    """创建模型"""
+
+    model = MultiScaleFCCell(config["input_size"], # set to 3: x,y,t
+                             config["output_size"],# set to 3: u,v,p
+                             layers=config["layers"],# same as deepxde
+                             neurons=config["neurons"],# same as deepxde
+                             input_scale=config["input_scale"],# may be changed
+                             residual=config["residual"],# same as deepxde
+                             weight_init=XavierUniform(gain=1),# same as deepxde
+                             act="tanh",# same as deepxde
+                             num_scales=config["num_scales"],# may be changed
+                             amp_factor=config["amp_factor"],# may be changed
+                             scale_factor=config["scale_factor"]# may be changed
+                             )
+
+    # model.to_float(mstype.float16)
+    # model.input_scale.to_float(mstype.float32)
+    print("num_losses=", elec_train_dataset.num_dataset)
+
+    mtl = MTLWeightedLossCell(num_losses=elec_train_dataset.num_dataset)
+
+    """创建问题"""
+    C1 = Parameter(Tensor(0.0,mstype.float32),name="C1",requires_grad=True)
+    C2 = Parameter(Tensor(0.0,mstype.float32),name="C2",requires_grad=True)
+    train_prob = {}
+    for dataset in elec_train_dataset.all_datasets:
+        train_prob[dataset.name] = NS_equation(model=model, C1=C1, C2=C2, config=config,
+                                                        domain_name=dataset.name+"_points",
+                                                        bc_name=dataset.name+"_points",
+                                                        ic_name=dataset.name+"_points")
+
+    train_constraints = SupervisedConstraints(elec_train_dataset,train_prob)
+
+
+    """优化器"""
+    params = model.trainable_params() + mtl.trainable_params()+[C1,C2]
+    lr_scheduler = MultiStepLR(config["lr"],config["milestones"],config["lr_gamma"],steps_per_epoch,config["train_epoch"])
+    lr = lr_scheduler.get_lr()
+    optim = nn.Adam(params,learning_rate=Tensor(lr))
+
+    if config["load_ckpt"]:
+        param_dict = load_checkpoint(config["load_ckpt_path"])
+        load_param_into_net(model, param_dict)
+        load_param_into_net(mtl, param_dict)
+    # define solver
+    solver = SupervisedSolver(model,
+                    optimizer=optim,
+                    mode="PINNs",
+                    train_constraints=train_constraints,
+                    test_constraints=None,
+                    metrics={'l2': L2(), 'distance': nn.MAE()},
+                    loss_fn=nn.MSELoss(),
+                    loss_scale_manager=DynamicLossScaleManager(),
+                    amp_level="O3",
+                    mtl_weighted_cell=mtl,
+                    )
+
+    test_input,test_label = test_data_prepare(config)
+
+    loss_time_callback = LossAndTimeMonitor(steps_per_epoch)
+    loss_cb = PredictCallback(model=model, predict_interval=config["predict_interval"], input_data=test_input, label=test_label)
+    show_variables = GetVariableCallback(optim=optim, interval=config["show_variables_interval"])
+    callbacks = [loss_time_callback,loss_cb,show_variables]
+    if config["save_ckpt"]:
+        config_ck = CheckpointConfig(save_checkpoint_steps=50,
+                                     keep_checkpoint_max=2)
+        ckpoint_cb = ModelCheckpoint(prefix='ckpt_NS',
+                                     directory=config["save_ckpt_path"], config=config_ck)
+        callbacks += [ckpoint_cb]
+
+
+    solver.train(config["train_epoch"], train_dataset, callbacks=callbacks, dataset_sink_mode=True)
+
+if __name__ == '__main__':
+    #print("pid:", os.getpid())
+    configs = json.load(open("./config.json"))
+    #print("check config: {}".format(configs))
+    time_beg = time.time()
+    train(configs)
+    print("End-to-End total time: {} s".format(time.time() - time_beg))
