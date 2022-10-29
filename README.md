@@ -1,5 +1,8 @@
-# PINNworks
+# MindX-Science
+#### 介绍
+昇腾AI for Science高性能开发套件
 
+# PINNworks
 ## NS 测试混合精度样例
 1. clone本仓库到本地
 2. 执行examples/NS/handleData.py ,随机采样生成数据集（data_input.npy,data_uv.npy）到data目录下。
