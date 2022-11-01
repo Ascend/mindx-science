@@ -61,13 +61,6 @@ class PredictCallback(Callback):
         self._step_counter = 0
         self.l2_error = (1.0)#ok
 
-    def __enter__(self):
-        self.summary_record = SummaryRecord(self.summary_dir)
-        return self
-
-    def __exit__(self, *exc_args):
-        self.summary_record.close()
-
     def epoch_end(self, run_context):
         """
         Evaluate the model at the end of epoch.
@@ -109,7 +102,6 @@ class PredictCallback(Callback):
         print("prediction=", prediction)
         l2_error_u = np.sqrt(np.sum(np.square(error))) / np.sqrt(np.sum(np.square(label)))
         print("l2_error, u: ", l2_error_u)
-        self.summary_record.add_value('scalar', 'l2_u', Tensor(l2_error_u))
         return l2_error_u
 
     def get_l2_error(self):

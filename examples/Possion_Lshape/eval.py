@@ -88,6 +88,7 @@ def evaluation(config):
     print("predict total time: {} s".format(time.time() - time_beg))
     prediction = prediction_each.reshape(label.shape)
     vision_path = config.get("vision_path", "./vision")
+    #visual_result(inputs, label, prediction, path=vision_path, name="predict")
     cloud_picture(inputs, label, prediction, path=vision_path)
 
     # get accuracy
