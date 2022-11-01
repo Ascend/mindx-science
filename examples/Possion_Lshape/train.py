@@ -13,10 +13,6 @@
 # limitations under the License.
 # ============================================================================
 
-# import sys
-# sys.path.append(r"F:\\0-code\\pinnwor")
-# print(sys.path)
-
 """train process"""
 import os
 import json
@@ -78,8 +74,7 @@ def train(config):
                              amp_factor=config["amp_factor"],# may be changed
                              scale_factor=config["scale_factor"]# may be changed
                              )
-    # model.to_float(mstype.float16)
-    # model.input_scale.to_float(mstype.float32)
+
     '''
     model = FCSequential(in_channel=config["input_size"],
                          out_channel=config["output_size"],

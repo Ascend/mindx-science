@@ -13,10 +13,6 @@
 # limitations under the License.
 # ============================================================================
 
-# import sys
-# sys.path.append(r"F:\\0-code\\pinnwor")
-# print(sys.path)
-
 import os
 import json
 import time
@@ -41,7 +37,6 @@ from src.callback import TlossCallback
 from src.Schrodinger import Schrodinger
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
-# from pinn.loss import Schrodinger
 
 set_seed(123456)
 np.random.seed(123456)
@@ -115,10 +110,8 @@ def train(config):
 
 if __name__ == '__main__':
     print("pid:", os.getpid())
-    # profiler = Profiler(output_path='./profiler_data')
     configs = json.load(open("./config.json"))
     print("check config: {}".format(configs))
     time_beg = time.time()
     train(configs)
-    # profiler.analyse()
     print("End-to-End total time: {} s".format(time.time() - time_beg))

@@ -1,3 +1,8 @@
+'''
+Description: 说明
+Author: Marcel
+Date: 2022-11-01 12:44:07
+'''
 # Copyright 2022 Huawei Technologies Co., Ltd
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +19,5 @@
 # ============================================================================
 
 from .metrics import L2
-# from .constants import LIGHT_SPEED, MU, EPS, PI
-# from .lr_scheduler import LearningRate, get_poly_lr
 
 __all__ = ["L2"]

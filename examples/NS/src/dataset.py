@@ -63,8 +63,6 @@ def load_training_data(num):
     v_train = data_domain[idx, 4:5]
     p_train = data_domain[idx, 5:6]
 
-    #scipy.io.savemat('data.mat',{'x_train': x_train,'y_train': y_train,'t_train': t_train,'u_train': u_train,'v_train': v_train,'p_train': p_train})
-
     res1 = np.hstack((x_train,y_train,t_train))
     res2 = np.hstack((u_train,v_train,p_train))
     return res1,res2
@@ -102,7 +100,6 @@ def create_train_dataset(config):
                              constraint_type="Equation")
 
     dataset = SupervisedDataset(geom_dict, existed_data_list=[ob_xyt,ob_uv], label_data={"ob_uv":3})
-    # dataset = Dataset(geom_dict,existed_data_list=[ob_xyt,ob_uv])
     return dataset
 
 def test_data_prepare(config):

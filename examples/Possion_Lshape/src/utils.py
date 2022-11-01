@@ -65,11 +65,6 @@ def visual(input_data, label, predict, path, name):
     """visulization of ex/ey/hz"""
     [sample_x, sample_y] = np.shape(input_data)
 
-    # 将label、predict归一化
-    #ex_vmin, ex_vmax = np.percentile(label[:, :, :, 0], [0.5, 99.5])
-    #ey_vmin, ey_vmax = np.percentile(label[:, :, :, 1], [0.5, 99.5])
-    #hz_vmin, hz_vmax = np.percentile(label[:, :, :, 2], [0.5, 99.5])
-
     vmin_list = [ex_vmin, ey_vmin, hz_vmin]
     vmax_list = [ex_vmax, ey_vmax, hz_vmax]
 
@@ -183,8 +178,6 @@ def cloud_picture(inputs, label, prediction, path):
     Z_label = Z_label.squeeze()
     Z_pred = Z_pred.squeeze()
 
-    #fig, ax = plt.subplots(figName, figsize=(12, 8))
-    #ax1 = plt.subplot(121)
     # level设置云图颜色范围以及颜色梯度划分，只能显示0-601范围数值，每间隔20颜色变化
     levels = np.linspace(0,0.2,100).tolist()
     cset1 = ax1.contourf(X1, Y1, Z_label, levels, cmap=cm.jet, corner_mask=False)
@@ -192,8 +185,6 @@ def cloud_picture(inputs, label, prediction, path):
     # 设置cmap为jet，最小值为蓝色，最大为红色，和有限元软件云图配色类似
 
     # 设置图片在屏幕中出现的位置
-    #mngr = plt.get_current_fig_manager()
-    #mngr.window.wm_geometry("+350+50")
 
     ax1.set_title("label", size=5)  # 设置图名
     ax2.set_title("predict", size=5)  # 设置图名

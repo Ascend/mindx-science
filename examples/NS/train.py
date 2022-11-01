@@ -73,8 +73,6 @@ def train(config):
                              scale_factor=config["scale_factor"]# may be changed
                              )
 
-    # model.to_float(mstype.float16)
-    # model.input_scale.to_float(mstype.float32)
     print("num_losses=", elec_train_dataset.num_dataset)
 
     mtl = MTLWeightedLossCell(num_losses=elec_train_dataset.num_dataset)

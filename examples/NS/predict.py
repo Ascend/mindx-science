@@ -45,12 +45,12 @@ def load_training_data(num):
     PP = P_star  # N x T
     x = XX.flatten()[:, None]  # NT x 1
     y = YY.flatten()[:, None]  # NT x 1
-    t = TT.flatten()[:, None]  # NT x 1
+    tt = TT.flatten()[:, None]  # NT x 1
     u = UU.flatten()[:, None]  # NT x 1
     v = VV.flatten()[:, None]  # NT x 1
     p = PP.flatten()[:, None]  # NT x 1
     # training domain: X × Y = [1, 8] × [−2, 2] and T = [0, 7]
-    data1 = np.concatenate([x, y, t, u, v, p], 1)
+    data1 = np.concatenate([x, y, tt, u, v, p], 1)
     data2 = data1[:, :][data1[:, 2] <= 7]
     data3 = data2[:, :][data2[:, 0] >= 1]
     data4 = data3[:, :][data3[:, 0] <= 8]
@@ -110,9 +110,7 @@ for _, param in model.parameters_and_names():
             convert_ckpt_dict[param.name] = param_dict[key]
 load_param_into_net(model, convert_ckpt_dict)
 
-
 uu, vv, pp = [], [], []
-
 tu, tv, tp = [], [], []
 pre_u, pre_v, pre_p = [], [], []
 
@@ -123,9 +121,6 @@ for t in range(0, 8):
     uvp_pred = predict(model,xyt_pred)
     x_pred, y_pred, t_pred = xyt_pred[:, 0], xyt_pred[:, 1], xyt_pred[:, 2]
     u_pred, v_pred, p_pred = uvp_pred[:, 0], uvp_pred[:, 1], uvp_pred[:, 2]
-    # tmp_write(u_tru,ob_u[ob_t == t])
-    # tmp_write(v_tru,ob_v[ob_t == t])
-    # tmp_write(p_tru,ob_p[ob_t == t])
     # 筛取t为整数的点
     for i in range(len(ob_t)):
         if ob_t[i] == t:
@@ -142,11 +137,8 @@ for t in range(0, 8):
     print('-----------------------------------------------------------------------------------------------')
 
     print("u值:t=" + str(t))
-    # m_ob_u = sum(ob_u)/len(ob_u)
-    # m_pr_u = sum(u_pred)/len(u_pred)
     i_ob_u = tu[len(tu) // 2]
     i_pr_u = pre_u[len(pre_u) // 2]
-    # axis_u = abs(i_ob_u - i_pr_u)
     axis_u = 0
     print(i_ob_u)
     print(i_pr_u)
@@ -161,15 +153,10 @@ for t in range(0, 8):
     tu.clear()
     pre_u.clear()
 
-    # print(len(u_pred))
-    # tmp_write(u_pre,u_pred)
     print('-----------------------------------------------------------------------------------------------')
-    # m_ob_v = sum(ob_v)/len(ob_v)
-    # m_pr_v = sum(v_pred)/len(v_pred)
     print("v值:t=" + str(t))
     i_ob_v = tv[len(tv) // 2]
     i_pr_v = pre_v[len(pre_v) // 2]
-    # axis_v = abs(i_ob_v - i_pr_v)
     axis_v = 0
     print(i_ob_v)
     print(i_pr_v)
@@ -184,11 +171,7 @@ for t in range(0, 8):
     tv.clear()
     pre_v.clear()
 
-    # print(v_pred)
-    # tmp_write(v_pre,v_pred)
     print('-----------------------------------------------------------------------------------------------')
-    # m_ob_p = sum(ob_p)/len(ob_p)
-    # m_pr_p = sum(p_pred)/len(p_pred)
     print("p值:t=" + str(t))
     i_ob_p = tp[len(tp) // 2]
     i_pr_p = pre_p[len(pre_p) // 2]
@@ -205,8 +188,6 @@ for t in range(0, 8):
     pp.clear()
     tp.clear()
     pre_p.clear()
-    #print(p_pred)
-    #tmp_write(p_pre,p_pred)
 
     x_true = ob_x[ob_t == t]
     y_true = ob_y[ob_t == t]

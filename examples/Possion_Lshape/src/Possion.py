@@ -24,7 +24,6 @@ from mindspore import Tensor
 import mindspore.common.dtype as mstype
 
 from pinn.solver import Problem
-#from mindelec.common import MU, EPS, LIGHT_SPEED, PI
 from pinn.operators import SecondOrderGrad, Grad
 
 
@@ -57,7 +56,6 @@ class Possion_equation(Problem):
         self.concat = ops.Concat(1)
         self.tile = ops.Tile()
 
-
         # src space
         self.num_edges = 6 #len(config["vertex_list"])
         self.vertex_list = config["vertex_list"]
@@ -80,22 +78,14 @@ class Possion_equation(Problem):
         """maxwell equation of TE mode wave"""
         u = output[0]
         data = kwargs[self.domain_name]
-        # data.to(mindspore.float16)
-        #x = self.reshape(data[:, 0], (-1, 1))
-        #y = self.reshape(data[:, 1], (-1, 1))
         du_dxx = self.grad1(data)
         du_dyy = self.grad2(data)
-        #du_dx = self.grad(data, 0, 0, u)
-        #du_dxx = self.grad(data, 0, 0, du_dx)
-        #du_dy = self.grad(data, 1, 0, u)
-        #du_dyy = self.grad(data, 1, 0, du_dy)
         return 1 + du_dxx + du_dyy
 
     @ms_function
     def boundary_condition(self, *output, **kwargs):
         """Dirichlet boundary condition"""
         u = self.cast(output[0], mstype.float32)
-        #data = kwargs[self.bc_name]
         '''
         coord_min = self.coord_min
         coord_max = self.coord_max

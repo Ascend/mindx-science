@@ -60,7 +60,6 @@ def load_training_data(num):
     rruv = np.hstack((x_train, y_train, t_train, u_train, v_train)).astype(np.float32)
     rr_out = np.hstack((u_train,v_train,p_train))
     rr1 = np.array(rruv[...,:-2]).astype(np.float32)
-    # rruv = rruv[...,-2:]
     np.save(prefix + 'data_input.npy', rr1)
     np.save(prefix + 'data_uv.npy',rruv)
 
