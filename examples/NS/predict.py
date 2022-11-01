@@ -122,14 +122,14 @@ for t in range(0, 8):
     x_pred, y_pred, t_pred = xyt_pred[:, 0], xyt_pred[:, 1], xyt_pred[:, 2]
     u_pred, v_pred, p_pred = uvp_pred[:, 0], uvp_pred[:, 1], uvp_pred[:, 2]
     # 筛取t为整数的点
-    for i in range(len(ob_t)):
-        if ob_t[i] == t:
-            tu.append(ob_u[i][0])
-            tv.append(ob_v[i][0])
-            tp.append(ob_p[i][0])
-            pre_u.append(u_pred[i])
-            pre_v.append(v_pred[i])
-            pre_p.append(p_pred[i])
+    for ind in range(len(ob_t)):
+        if ob_t[ind] == t:
+            tu.append(ob_u[ind][0])
+            tv.append(ob_v[ind][0])
+            tp.append(ob_p[ind][0])
+            pre_u.append(u_pred[ind])
+            pre_v.append(v_pred[ind])
+            pre_p.append(p_pred[ind])
 
     print("测试点数量：")
     print(len(tu))
@@ -144,8 +144,8 @@ for t in range(0, 8):
     print(i_pr_u)
     print(axis_u)
 
-    for i in range(len(tu)):
-        uu.append(abs(abs(tu[i] - pre_u[i]) - axis_u))
+    for iu in range(len(tu)):
+        uu.append(abs(abs(tu[iu] - pre_u[iu]) - axis_u))
     print(L2(uu) / L2(tu))
     print(sum(uu))
     print(sum(uu) / len(uu))
@@ -162,8 +162,8 @@ for t in range(0, 8):
     print(i_pr_v)
     print(axis_v)
 
-    for i in range(len(tv)):
-        vv.append(abs(abs(tv[i] - pre_v[i]) - axis_v))
+    for iv in range(len(tv)):
+        vv.append(abs(abs(tv[iv] - pre_v[iv]) - axis_v))
     print(L2(vv) / L2(tv))
     print(sum(vv))
     print(sum(vv) / len(vv))
@@ -180,8 +180,8 @@ for t in range(0, 8):
     print(i_pr_p)
     print(axis_p)
 
-    for i in range(len(tp)):
-        pp.append(abs(abs(tp[i]-pre_p[i])-axis_p))
+    for ip in range(len(tp)):
+        pp.append(abs(abs(tp[ip]-pre_p[ip])-axis_p))
     print(L2(pp)/L2(tp))
     print(sum(pp))
     print(sum(pp)/len(pp))
