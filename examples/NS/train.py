@@ -130,9 +130,7 @@ def train(config):
     solver.train(config["train_epoch"], train_dataset, callbacks=callbacks, dataset_sink_mode=True)
 
 if __name__ == '__main__':
-    #print("pid:", os.getpid())
     configs = json.load(open("./config.json"))
-    #print("check config: {}".format(configs))
     time_beg = time.time()
     train(configs)
     print("End-to-End total time: {} s".format(time.time() - time_beg))

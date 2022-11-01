@@ -17,9 +17,9 @@
 =========================用于检查输入数据的脚本=========================
 """
 
+import sys
 import json
 import numpy as np
-import sys
 
 configs = json.load(open("./config.json"))
 for filename in configs["train_data_path"]:

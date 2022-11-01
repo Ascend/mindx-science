@@ -71,7 +71,6 @@ class SupervisedNetWithLoss(NetWithLoss):
                 for column_name in self.dataset_input_map[name]:
                     net_input += (data[self.column_index_map[column_name]][...,:idx],)
                 out = self.net_without_loss(*net_input)
-                #out = _transfer_tensor_to_tuple(out)
                 base = out[...,0:2]
                 temp_loss = self.reduce_mean(self.loss_fn_dict[name](base, label_data))
                 loss[name] = temp_loss
@@ -88,12 +87,6 @@ class SupervisedNetWithLoss(NetWithLoss):
         loss["total_loss"] = total_loss
 
         return total_loss
-        # "------------------debug用，查看各部分loss--------------------"
-
-        # loss_re = []
-        # for i in loss.keys():
-        #     loss_re.append(loss[i])
-        # return loss_re[0]
 
     def judgeLabel(self,dataset_name):
         '''

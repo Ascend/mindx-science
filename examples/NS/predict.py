@@ -72,9 +72,9 @@ def L2(lst):
         res += float(i) ** 2
     return np.sqrt(res)
 
-def predict(model,input):
+def predict(mod,input):
     tmp = Tensor(input.reshape(140000,3),mstype.float32)
-    pred = model(tmp)
+    pred = mod(tmp)
     pred = pred.asnumpy()
     return pred
 

@@ -81,7 +81,6 @@ def create_train_dataset(config):
     boundary.set_sampling_config(create_config_from_edict(bc_sampling_config))
 
     geom_dict = {src_region:["domain"],
-                 #boundary:["BC"]
                  }
 
     ob_xyt = ExistedDataConfig(name='ob_xyt',
