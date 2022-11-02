@@ -18,14 +18,14 @@ import json
 import time
 import numpy as np
 
-from mindspore.common import *
 from mindspore import context
 import mindspore.nn as nn
 from mindspore.train import DynamicLossScaleManager
 from mindspore.train.callback import ModelCheckpoint, CheckpointConfig
 from mindspore.train.serialization import load_checkpoint, load_param_into_net
 import mindspore.common.dtype as mstype
-from mindspore.common.initializer import *
+from mindspore.common.initializer import XavierUniform
+from mindspore.common import set_seed
 from mindspore import Tensor, Parameter
 
 from pinn.solver import LossAndTimeMonitor
@@ -38,10 +38,11 @@ from pinn.common.lr_scheduler import MultiStepLR
 from src import create_train_dataset
 from src.dataset import test_data_prepare
 from src.callback import PredictCallback, GetVariableCallback
-from src.NS import NS_equation
+from src.ns import NsEquation
 
 set_seed(123456)
 np.random.seed(123456)
+
 
 def train(config):
 
@@ -53,24 +54,25 @@ def train(config):
 
     elec_train_dataset = create_train_dataset(config)
 
-    train_dataset = elec_train_dataset.create_dataset(batch_size=config["train_batch_size"], prebatched_data=True,shuffle=False)
+    train_dataset = elec_train_dataset.create_dataset(batch_size=config["train_batch_size"],
+                                                      prebatched_data=True, shuffle=False)
 
     steps_per_epoch = len(elec_train_dataset)
 
 
     """创建模型"""
 
-    model = MultiScaleFCCell(config["input_size"], # set to 3: x,y,t
-                             config["output_size"],# set to 3: u,v,p
-                             layers=config["layers"],# same as deepxde
-                             neurons=config["neurons"],# same as deepxde
-                             input_scale=config["input_scale"],# may be changed
-                             residual=config["residual"],# same as deepxde
-                             weight_init=XavierUniform(gain=1),# same as deepxde
-                             act="tanh",# same as deepxde
-                             num_scales=config["num_scales"],# may be changed
-                             amp_factor=config["amp_factor"],# may be changed
-                             scale_factor=config["scale_factor"]# may be changed
+    model = MultiScaleFCCell(config["input_size"],
+                             config["output_size"],
+                             layers=config["layers"],
+                             neurons=config["neurons"],
+                             input_scale=config["input_scale"],
+                             residual=config["residual"],
+                             weight_init=XavierUniform(gain=1),
+                             act="tanh",
+                             num_scales=config["num_scales"],
+                             amp_factor=config["amp_factor"],
+                             scale_factor=config["scale_factor"]
                              )
 
     print("num_losses=", elec_train_dataset.num_dataset)
@@ -78,23 +80,24 @@ def train(config):
     mtl = MTLWeightedLossCell(num_losses=elec_train_dataset.num_dataset)
 
     """创建问题"""
-    C1 = Parameter(Tensor(0.0,mstype.float32),name="C1",requires_grad=True)
-    C2 = Parameter(Tensor(0.0,mstype.float32),name="C2",requires_grad=True)
+    c1 = Parameter(Tensor(0.0, mstype.float32), name="C1", requires_grad=True)
+    c2 = Parameter(Tensor(0.0, mstype.float32), name="C2", requires_grad=True)
     train_prob = {}
     for dataset in elec_train_dataset.all_datasets:
-        train_prob[dataset.name] = NS_equation(model=model, C1=C1, C2=C2, config=config,
+        train_prob[dataset.name] = NsEquation(model=model, c1=c1, c2=c2, config=config,
                                                         domain_name=dataset.name+"_points",
                                                         bc_name=dataset.name+"_points",
                                                         ic_name=dataset.name+"_points")
 
-    train_constraints = SupervisedConstraints(elec_train_dataset,train_prob)
+    train_constraints = SupervisedConstraints(elec_train_dataset, train_prob)
 
 
     """优化器"""
-    params = model.trainable_params() + mtl.trainable_params()+[C1,C2]
-    lr_scheduler = MultiStepLR(config["lr"],config["milestones"],config["lr_gamma"],steps_per_epoch,config["train_epoch"])
+    params = model.trainable_params() + mtl.trainable_params()+[c1, c2]
+    lr_scheduler = MultiStepLR(config["lr"], config["milestones"],
+                               config["lr_gamma"], steps_per_epoch, config["train_epoch"])
     lr = lr_scheduler.get_lr()
-    optim = nn.Adam(params,learning_rate=Tensor(lr))
+    optim = nn.Adam(params, learning_rate=Tensor(lr))
 
     if config["load_ckpt"]:
         param_dict = load_checkpoint(config["load_ckpt_path"])
@@ -109,16 +112,17 @@ def train(config):
                     metrics={'l2': L2(), 'distance': nn.MAE()},
                     loss_fn=nn.MSELoss(),
                     loss_scale_manager=DynamicLossScaleManager(),
-                    amp_level="O3",
+                    amp_level="O0",
                     mtl_weighted_cell=mtl,
                     )
 
-    test_input,test_label = test_data_prepare(config)
+    test_input, test_label = test_data_prepare(config)
 
     loss_time_callback = LossAndTimeMonitor(steps_per_epoch)
-    loss_cb = PredictCallback(model=model, predict_interval=config["predict_interval"], input_data=test_input, label=test_label)
+    loss_cb = PredictCallback(model=model, predict_interval=config["predict_interval"],
+                              input_data=test_input, label=test_label)
     show_variables = GetVariableCallback(optim=optim, interval=config["show_variables_interval"])
-    callbacks = [loss_time_callback,loss_cb,show_variables]
+    callbacks = [loss_time_callback, loss_cb, show_variables]
     if config["save_ckpt"]:
         config_ck = CheckpointConfig(save_checkpoint_steps=50,
                                      keep_checkpoint_max=2)

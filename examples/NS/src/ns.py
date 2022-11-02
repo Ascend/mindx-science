@@ -1,8 +1,3 @@
-'''
-Description: 说明
-Author: Marcel
-Date: 2022-11-01 12:44:07
-'''
 # Copyright 2022 Huawei Technologies Co., Ltd
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,14 +15,15 @@ Date: 2022-11-01 12:44:07
 
 import mindspore
 from mindspore import ms_function
-from mindspore import ops,Tensor
+from mindspore import ops, Tensor
 
 from pinn.solver import Problem
 from pinn.operators import SecondOrderGrad, Grad
 
-class NS_equation(Problem):
-    def __init__(self, model,C1,C2,config, domain_name=None, bc_name=None, ic_name=None):
-        super(NS_equation, self).__init__()
+
+class NsEquation(Problem):
+    def __init__(self, model, c1, c2, config, domain_name=None, bc_name=None, ic_name=None):
+        super(NsEquation, self).__init__()
         self.domain_name = domain_name
         self.bc_name = bc_name
         self.ic_name = ic_name
@@ -41,8 +37,8 @@ class NS_equation(Problem):
         self.secondgrad2 = SecondOrderGrad(self.model, 1, 1, 0)
         self.secondgrad3 = SecondOrderGrad(self.model, 0, 0, 1)
         self.secondgrad4 = SecondOrderGrad(self.model, 1, 1, 1)
-        self.C1 = C1
-        self.C2 = C2
+        self.c1 = c1
+        self.c2 = c2
 
     @ms_function
     def governing_equation(self, *output, **kwargs):
@@ -62,6 +58,7 @@ class NS_equation(Problem):
         du_yy = self.secondgrad2(data)
         dv_xx = self.secondgrad3(data)
         dv_yy = self.secondgrad4(data)
-        x_momentum = du_t + self.C1 * (u * du_x + v * du_y) + dp_x - self.C2 * (du_xx + du_yy)
-        y_momentum = dv_t + self.C1 * (u * dv_x + v * dv_y) + dp_y - self.C2 * (dv_xx + dv_yy)
-        return ops.Concat(1)((x_momentum,y_momentum))
+        x_momentum = du_t + self.c1 * (u * du_x + v * du_y) + dp_x - self.c2 * (du_xx + du_yy)
+        y_momentum = dv_t + self.c1 * (u * dv_x + v * dv_y) + dp_y - self.c2 * (dv_xx + dv_yy)
+        return ops.Concat(1)((x_momentum, y_momentum))
+

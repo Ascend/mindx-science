@@ -15,7 +15,7 @@
 
 import json
 import numpy as np
-from mindspore.common.initializer import *
+from mindspore.common.initializer import XavierUniform
 from mindspore import context, Tensor
 import mindspore.common.dtype as mstype
 from mindspore.train.serialization import load_checkpoint, load_param_into_net
@@ -23,26 +23,27 @@ from pinn.architecture import MultiScaleFCCell
 from src.utils import load_training_data
 
 import matplotlib.pyplot as plt
-from scipy.io import loadmat
-
-context.set_context(mode=context.GRAPH_MODE, save_graphs=False, device_target="CPU", save_graphs_path="./graph")
 
 
-def L2(lst):
+def l2(lst):
     res = 0
     for i in lst:
         res += float(i) ** 2
     return np.sqrt(res)
 
-def predict(mod,input):
-    tmp = Tensor(input.reshape(140000,3),mstype.float32)
-    pred = mod(tmp)
-    pred = pred.asnumpy()
-    return pred
+
+def predict(mod, inp):
+    tmp = Tensor(inp.reshape(140000, 3), mstype.float32)
+    pre = mod(tmp)
+    pre = pre.asnumpy()
+    return pre
 
 """evaluation"""
 
 config = json.load(open("./config.json"))
+
+context.set_context(mode=context.GRAPH_MODE, save_graphs=False, device_target=config["device_target"],
+                    device_id=config["device_id"], save_graphs_path="./graph")
 
 # define network
 model = MultiScaleFCCell(config["input_size"],
@@ -77,7 +78,7 @@ pre_u, pre_v, pre_p = [], [], []
 for t in range(0, 8):
     [ob_x, ob_y, ob_t, ob_u, ob_v, ob_p] = load_training_data(num=140000)
     xyt_pred = np.hstack((ob_x, ob_y, t * np.ones((len(ob_x), 1))))
-    uvp_pred = predict(model,xyt_pred)
+    uvp_pred = predict(model, xyt_pred)
     x_pred, y_pred, t_pred = xyt_pred[:, 0], xyt_pred[:, 1], xyt_pred[:, 2]
     u_pred, v_pred, p_pred = uvp_pred[:, 0], uvp_pred[:, 1], uvp_pred[:, 2]
     # 筛取t为整数的点
@@ -98,14 +99,12 @@ for t in range(0, 8):
     print("u值:t=" + str(t))
     i_ob_u = tu[len(tu) // 2]
     i_pr_u = pre_u[len(pre_u) // 2]
-    axis_u = 0
     print(i_ob_u)
     print(i_pr_u)
-    print(axis_u)
 
     for iu in range(len(tu)):
-        uu.append(abs(abs(tu[iu] - pre_u[iu]) - axis_u))
-    print(L2(uu) / L2(tu))
+        uu.append(abs(abs(tu[iu] - pre_u[iu])))
+    print(l2(uu) / l2(tu))
     print(sum(uu))
     print(sum(uu) / len(uu))
     uu.clear()
@@ -116,14 +115,12 @@ for t in range(0, 8):
     print("v值:t=" + str(t))
     i_ob_v = tv[len(tv) // 2]
     i_pr_v = pre_v[len(pre_v) // 2]
-    axis_v = 0
     print(i_ob_v)
     print(i_pr_v)
-    print(axis_v)
 
     for iv in range(len(tv)):
-        vv.append(abs(abs(tv[iv] - pre_v[iv]) - axis_v))
-    print(L2(vv) / L2(tv))
+        vv.append(abs(abs(tv[iv] - pre_v[iv])))
+    print(l2(vv) / l2(tv))
     print(sum(vv))
     print(sum(vv) / len(vv))
     vv.clear()
@@ -141,7 +138,7 @@ for t in range(0, 8):
 
     for ip in range(len(tp)):
         pp.append(abs(abs(tp[ip]-pre_p[ip])-axis_p))
-    print(L2(pp)/L2(tp))
+    print(l2(pp)/l2(tp))
     print(sum(pp))
     print(sum(pp)/len(pp))
     pp.clear()
@@ -154,7 +151,7 @@ for t in range(0, 8):
     v_true = ob_v[ob_t == t]
     p_true = ob_p[ob_t == t]
 
-    prefix = "results/"
+    PREFIX = "results/"
 
     fig, ax = plt.subplots(2, 1)
     cntr0 = ax[0].tricontourf(x_pred, y_pred, u_pred, levels=80, cmap="rainbow")
@@ -170,7 +167,7 @@ for t in range(0, 8):
     ax[1].set_xlabel("X", fontsize=7.5, family="Arial")
     ax[1].set_ylabel("Y", fontsize=7.5, family="Arial")
     fig.tight_layout()
-    plt.savefig(prefix + 'u' + '(t=' + str(t) + ').jpg')
+    plt.savefig(PREFIX + 'u' + '(t=' + str(t) + ').jpg')
     plt.show()
 
     fig, ax = plt.subplots(2, 1)
@@ -187,7 +184,7 @@ for t in range(0, 8):
     ax[1].set_xlabel("X", fontsize=7.5, family="Arial")
     ax[1].set_ylabel("Y", fontsize=7.5, family="Arial")
     fig.tight_layout()
-    plt.savefig(prefix + 'v' + '(t=' + str(t) + ').jpg')
+    plt.savefig(PREFIX + 'v' + '(t=' + str(t) + ').jpg')
     plt.show()
 
     fig, ax = plt.subplots(2, 1)
@@ -204,6 +201,6 @@ for t in range(0, 8):
     ax[1].set_xlabel("X", fontsize=7.5, family="Arial")
     ax[1].set_ylabel("Y", fontsize=7.5, family="Arial")
     fig.tight_layout()
-    plt.savefig(prefix + 'p' + '(t=' + str(t) + ').jpg')
+    plt.savefig(PREFIX + 'p' + '(t=' + str(t) + ').jpg')
     plt.show()
 

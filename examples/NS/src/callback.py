@@ -21,6 +21,7 @@ from mindspore.train.callback import Callback
 from mindspore import Tensor
 import mindspore.common.dtype as mstype
 
+
 class PredictCallback(Callback):
     """
     Evaluate the model during training.
@@ -68,7 +69,7 @@ class PredictCallback(Callback):
                 prediction[index: index_end, :] = predict[:, :]
                 index = index_end
             print("Total prediction time: {} s".format(time.time() - time_beg))
-            error = label[:,:2] - prediction[:,:2]
+            error = label[:, :2] - prediction[:, :2]
             l2_error = np.sqrt(np.sum(np.square(error[:, 0]))) / np.sqrt(np.sum(np.square(label[:, 0])))
             print("l2_error(u,v): ", l2_error)
             print("=================================End Evaluation=================================")
@@ -80,7 +81,7 @@ class PredictCallback(Callback):
 
 class GetVariableCallback(Callback):
 
-    def __init__(self,optim,interval):
+    def __init__(self, optim, interval):
         super(GetVariableCallback, self).__init__()
         self.optim = optim
         self.interval = interval
@@ -90,7 +91,7 @@ class GetVariableCallback(Callback):
         if cb_params.cur_epoch_num % self.interval == 0:
             print("======================Show Variables=======================")
             for _, param in self.optim.parameters_and_names():
-                if param.name =="C1" or param.name =="C2":
+                if param.name == "C1" or param.name == "C2":
                     print(Tensor(param))
             print("======================Show Variables=======================")
 

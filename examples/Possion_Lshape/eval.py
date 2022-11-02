@@ -16,36 +16,33 @@
 import os
 import json
 import time
-import copy
 import numpy as np
-from mindspore.common import *
-from mindspore.common.initializer import *
+from mindspore.common.initializer import XavierUniform
 from mindspore import context, Tensor
 import mindspore.common.dtype as mstype
 from mindspore.train.serialization import load_checkpoint, load_param_into_net
 from pinn.architecture import MultiScaleFCCell
 
 from src import get_test_data
-from src import visual_result
 from src.utils import cloud_picture
 
 
-context.set_context(mode=context.GRAPH_MODE, save_graphs=False, device_target="Ascend", save_graphs_path="./graph")
-
 def evaluation(config):
+    context.set_context(mode=context.GRAPH_MODE, save_graphs=False, device_target=config["device_target"],
+                        device_id=config["device_id"], save_graphs_path="./graph")
     """evaluation"""
     # define network
-    model = MultiScaleFCCell(config["input_size"], #2
-                             config["output_size"], #1
-                             layers=config["layers"], #ok
-                             neurons=config["neurons"], #ok
-                             input_scale=config["input_scale"],# may be changed
-                             residual=config["residual"],#与示例一致
-                             weight_init=XavierUniform(gain=1),#与示例一致
-                             act="tanh",#与示例一致
-                             num_scales=config["num_scales"],# may be changed
-                             amp_factor=config["amp_factor"],# may be changed
-                             scale_factor=config["scale_factor"]# may be changed
+    model = MultiScaleFCCell(config["input_size"],
+                             config["output_size"],
+                             layers=config["layers"],
+                             neurons=config["neurons"],
+                             input_scale=config["input_scale"],
+                             residual=config["residual"],
+                             weight_init=XavierUniform(gain=1),
+                             act="tanh",
+                             num_scales=config["num_scales"],
+                             amp_factor=config["amp_factor"],
+                             scale_factor=config["scale_factor"]
                              )
 
     model.to_float(mstype.float16)
@@ -96,6 +93,7 @@ def evaluation(config):
     print("prediction=", prediction)
     l2_error_u = np.sqrt(np.sum(np.square(error))) / np.sqrt(np.sum(np.square(label)))
     print("l2_error, u: ", l2_error_u)
+
 
 if __name__ == '__main__':
     print("pid:", os.getpid())
