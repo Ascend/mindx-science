@@ -64,8 +64,8 @@ param_dict = load_checkpoint(config["load_model_name"])
 convert_ckpt_dict = {}
 for _, param in model.parameters_and_names():
     convert_name1 = "jac2.model.model.cell_list." + param.name
-    convert_name2 = "jac2.model.model.cell_list." + ".".join(param.name.split(".")[2:])
-    for key in [convert_name1, convert_name2]:
+    CONVERT_NAME2 = "jac2.model.model.cell_list." + ".".join(param.name.split(".")[2:])
+    for key in [convert_name1, CONVERT_NAME2]:
         if key in param_dict:
             convert_ckpt_dict[param.name] = param_dict[key]
 load_param_into_net(model, convert_ckpt_dict)
@@ -82,7 +82,7 @@ for t in range(0, 8):
     x_pred, y_pred, t_pred = xyt_pred[:, 0], xyt_pred[:, 1], xyt_pred[:, 2]
     u_pred, v_pred, p_pred = uvp_pred[:, 0], uvp_pred[:, 1], uvp_pred[:, 2]
     # 筛取t为整数的点
-    for ind in range(len(ob_t)):
+    for ind, element in enumerate(ob_t):
         if ob_t[ind] == t:
             tu.append(ob_u[ind][0])
             tv.append(ob_v[ind][0])
@@ -102,7 +102,7 @@ for t in range(0, 8):
     print(i_ob_u)
     print(i_pr_u)
 
-    for iu in range(len(tu)):
+    for iu, eiu in enumerate(tu):
         uu.append(abs(abs(tu[iu] - pre_u[iu])))
     print(l2(uu) / l2(tu))
     print(sum(uu))
@@ -118,7 +118,7 @@ for t in range(0, 8):
     print(i_ob_v)
     print(i_pr_v)
 
-    for iv in range(len(tv)):
+    for iv, eiv in enumerate(tv):
         vv.append(abs(abs(tv[iv] - pre_v[iv])))
     print(l2(vv) / l2(tv))
     print(sum(vv))
@@ -136,7 +136,7 @@ for t in range(0, 8):
     print(i_pr_p)
     print(axis_p)
 
-    for ip in range(len(tp)):
+    for ip, eip in enumerate(tp):
         pp.append(abs(abs(tp[ip]-pre_p[ip])-axis_p))
     print(l2(pp)/l2(tp))
     print(sum(pp))

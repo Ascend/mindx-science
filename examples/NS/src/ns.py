@@ -45,7 +45,7 @@ class NsEquation(Problem):
         result = output[0]
         u = self.reshape(result[:, 0], (-1, 1))
         v = self.reshape(result[:, 1], (-1, 1))
-        data = kwargs[self.domain_name]
+        data = kwargs.get(self.domain_name)
         du_x = self.grad(data, 0, 0, result)
         du_y = self.grad(data, 1, 0, result)
         du_t = self.grad(data, 2, 0, result)

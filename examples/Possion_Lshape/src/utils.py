@@ -174,7 +174,7 @@ def cloud_picture(inputs, label, prediction, path):
     y = np.linspace(-1, 1, 1000)
     # 生成二维数据坐标点，可以想象成围棋棋盘上的一个个落子点
     x1, y1 = np.meshgrid(x, y)
-    fig, (ax1,ax2) = plt.subplots(nrows=1, ncols=2)
+    fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2)
     # 通过griddata函数插值得到所有的(X1, Y1)处对应的值，原始数据为Coordx, Coordy, Strain
     z_label = interpolate.griddata((inputs[:, 0], inputs[:, 1]), label, (x1, y1), method='cubic')
     z_pred = interpolate.griddata((inputs[:, 0], inputs[:, 1]), prediction, (x1, y1), method='cubic')

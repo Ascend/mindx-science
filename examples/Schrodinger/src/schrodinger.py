@@ -41,7 +41,7 @@ class Schrodinger(Problem):
 
     @ms_function
     def governing_equation(self, *output, **kwargs):
-        data = kwargs[self.domain_name]
+        data = kwargs.get(self.domain_name)
         h = output[0]
 
         du_xx = self.u_xx(data)
@@ -58,7 +58,7 @@ class Schrodinger(Problem):
     @ms_function
     def boundary_condition(self, *output, **kwargs):
         h = output[0]
-        data = kwargs[self.bc_name]
+        data = kwargs.get(self.bc_name)
         data1 = data * Tensor(np.array([-1, 1]), mindspore.float32)
         h1 = self.model(data1)
         du_x = self.grad(data, 0, 0, h)
@@ -72,7 +72,7 @@ class Schrodinger(Problem):
     @ms_function
     def initial_condition(self, *output, **kwargs):
         h = output[0]
-        data = kwargs[self.ic_name]
+        data = kwargs.get(self.ic_name)
         sechic = 1 / self.cosh(data)
         sechx = self.split(sechic)[0]
         error0 = self.concat((2 * sechx, self.zero(sechx)))

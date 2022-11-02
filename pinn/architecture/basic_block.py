@@ -56,9 +56,9 @@ class MultiScaleFCCell(MSFC):
                                                input_center, latent_vector)
 
 
-class Schrodinger_Net(nn.Cell):
+class SchrodingerNet(nn.Cell):
     def __init__(self):
-        super(Schrodinger_Net, self).__init__()
+        super(SchrodingerNet, self).__init__()
         self.fc1 = nn.Dense(2, 100, activation='tanh', weight_init='xavier_uniform')
         self.fc2 = nn.Dense(100, 100, activation='tanh', weight_init='xavier_uniform')
         self.fc3 = nn.Dense(100, 100, activation='tanh', weight_init='xavier_uniform')

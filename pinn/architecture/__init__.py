@@ -13,7 +13,7 @@
 # limitations under the License.
 # ============================================================================
 
-from .basic_block import  FCSequential, MultiScaleFCCell, Schrodinger_Net
+from .basic_block import  FCSequential, MultiScaleFCCell, SchrodingerNet
 from .mtl_weighted_loss import MTLWeightedLossCell
 
-__all__ = ["FCSequential", "MultiScaleFCCell", "MTLWeightedLossCell", "Schrodinger_Net"]
+__all__ = ["FCSequential", "MultiScaleFCCell", "MTLWeightedLossCell", "SchrodingerNet"]

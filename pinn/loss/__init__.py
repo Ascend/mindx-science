@@ -19,6 +19,7 @@ from .supervised_constraints import SupervisedConstraints
 from .constraints import Constraints
 from .net_with_loss import NetWithLoss, NetWithEval
 
-__all__ = ["SupervisedNetWithLoss", "SupervisedConstraints", "Constraints", "NetWithEval", "NetWithLoss", "get_loss_metric"]
+__all__ = ["SupervisedNetWithLoss", "SupervisedConstraints", "Constraints", "NetWithEval",
+           "NetWithLoss", "get_loss_metric"]
 
 

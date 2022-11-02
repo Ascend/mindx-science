@@ -29,7 +29,7 @@ from mindspore.profiler import Profiler
 
 from pinn.loss import Constraints
 from pinn.solver import Solver, LossAndTimeMonitor
-from pinn.architecture import Schrodinger_Net
+from pinn.architecture import SchrodingerNet
 
 from src.dataset import get_test_data, create_random_dataset
 from src.callback import TlossCallback
@@ -56,7 +56,7 @@ def train(config):
     steps_per_epoch = len(elec_train_dataset)
     print("check train dataset size: ", len(elec_train_dataset))
 
-    model = Schrodinger_Net()
+    model = SchrodingerNet()
 
     print("num_losses=", elec_train_dataset.num_dataset)
 
