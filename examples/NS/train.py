@@ -26,7 +26,7 @@ from mindspore.train.callback import ModelCheckpoint, CheckpointConfig
 from mindspore.train.serialization import load_checkpoint, load_param_into_net
 import mindspore.common.dtype as mstype
 from mindspore.common.initializer import *
-from mindspore import Tensor,Parameter
+from mindspore import Tensor, Parameter
 
 from pinn.solver import LossAndTimeMonitor
 from pinn.common import L2
