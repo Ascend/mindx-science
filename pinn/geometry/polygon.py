@@ -57,6 +57,76 @@ class Polygon(Geometry):
         self.normal = normal_vector(self.vertices)
         self.columns_dict = {}
 
+    def sampling(self, geom_type="domain"):
+        """
+        sampling points
+
+        Args:
+            geom_type (str): geometry type
+
+        Returns:
+            Numpy.array, 2D numpy array with or without boundary normal vectors
+
+        Raises:
+            ValueError: If `config` is None.
+            KeyError: If `geom_type` is `domain` but `config.domain` is None.
+            KeyError: If `geom_type` is `BC` but `config.bc` is None.
+            ValueError: If `geom_type` is neither `BC` nor `domain`.
+        """
+        config = self.sampling_config
+        if config is None:
+            raise ValueError("Sampling config for {}:{} is None, please call set_sampling_config method to set".format(
+                self.geom_type, self.name))
+        if not isinstance(geom_type, str):
+            raise TypeError("geom_type shouild be string, but got {} with type {}".format(geom_type, type(geom_type)))
+        if geom_type not in GEOM_TYPES:
+            raise ValueError("Unsupported geom_type: {}, only {} are supported now".format(geom_type, GEOM_TYPES))
+
+        # 采样主体
+        if geom_type.lower() == "domain":
+            if config.domain is None:
+                raise KeyError("Sampling config for domain of {}:{} should not be none"
+                               .format(self.geom_type, self.name))
+            logger.info("Sampling domain points for {}:{}, config info: {}"
+                        .format(self.geom_type, self.name, config.domain))
+            column_name = self.name + "_domain_points"
+            if config.domain.random_sampling:
+                data = self._random_domain_points(config.domain.size)
+            else:
+                data = self._grid_domain_points(config.domain.size)
+            self.columns_dict["domain"] = [column_name]
+            data = data.astype(self.dtype)
+            return data
+
+        # 采样边界点
+        if geom_type.lower() == "bc":
+            if config.bc is None:
+                raise KeyError("Sampling config for BC of {}:{} should not be none".format(self.geom_type, self.name))
+            logger.info("Sampling BC points for {}:{}, config info: {}"
+                        .format(self.geom_type, self.name, config.bc))
+            if config.bc.with_normal:
+                if config.bc.random_sampling:
+                    data, data_normal = self._random_boundary_points(config.bc.size)
+                else:
+                    data, data_normal = self._grid_boundary_points(config.bc.size)
+                column_data = self.name + "_BC_points"
+                column_normal = self.name + "_BC_normal"
+                self.columns_dict["BC"] = [column_data, column_normal]
+                data = data.astype(self.dtype)
+                data_normal = data_normal.astype(self.dtype)
+                return data, data_normal
+
+            if config.bc.random_sampling:
+                data = self._random_boundary_points(config.bc.size)
+            else:
+                data = self._grid_boundary_points(config.bc.size)
+            column_data = self.name + "_BC_points"
+            self.columns_dict["BC"] = [column_data]
+            data = data.astype(self.dtype)
+            return data
+        raise ValueError("Unknown geom_type: {}, only \"domain/BC\" are supported for {}:{}".format(
+            geom_type, self.geom_type, self.name))
+
     def _inside(self, points):
         """whether inside domain
         winding number method.
@@ -129,76 +199,6 @@ class Polygon(Geometry):
         # in case in last iteration, the number of new-generated points is so large that total nums is bigger than n
         return x[:n]
 
-    def sampling(self, geom_type="domain"):
-        """
-        sampling points
-
-        Args:
-            geom_type (str): geometry type
-
-        Returns:
-            Numpy.array, 2D numpy array with or without boundary normal vectors
-
-        Raises:
-            ValueError: If `config` is None.
-            KeyError: If `geom_type` is `domain` but `config.domain` is None.
-            KeyError: If `geom_type` is `BC` but `config.bc` is None.
-            ValueError: If `geom_type` is neither `BC` nor `domain`.
-        """
-        config = self.sampling_config
-        if config is None:
-            raise ValueError("Sampling config for {}:{} is None, please call set_sampling_config method to set".format(
-                self.geom_type, self.name))
-        if not isinstance(geom_type, str):
-            raise TypeError("geom_type shouild be string, but got {} with type {}".format(geom_type, type(geom_type)))
-        if geom_type not in GEOM_TYPES:
-            raise ValueError("Unsupported geom_type: {}, only {} are supported now".format(geom_type, GEOM_TYPES))
-
-        # 采样主体
-        if geom_type.lower() == "domain":
-            if config.domain is None:
-                raise KeyError("Sampling config for domain of {}:{} should not be none"
-                               .format(self.geom_type, self.name))
-            logger.info("Sampling domain points for {}:{}, config info: {}"
-                        .format(self.geom_type, self.name, config.domain))
-            column_name = self.name + "_domain_points"
-            if config.domain.random_sampling:
-                data = self._random_domain_points(config.domain.size)
-            else:
-                data = self._grid_domain_points(config.domain.size)
-            self.columns_dict["domain"] = [column_name]
-            data = data.astype(self.dtype)
-            return data
-
-        # 采样边界点
-        if geom_type.lower() == "bc":
-            if config.bc is None:
-                raise KeyError("Sampling config for BC of {}:{} should not be none".format(self.geom_type, self.name))
-            logger.info("Sampling BC points for {}:{}, config info: {}"
-                        .format(self.geom_type, self.name, config.bc))
-            if config.bc.with_normal:
-                if config.bc.random_sampling:
-                    data, data_normal = self._random_boundary_points(config.bc.size)
-                else:
-                    data, data_normal = self._grid_boundary_points(config.bc.size)
-                column_data = self.name + "_BC_points"
-                column_normal = self.name + "_BC_normal"
-                self.columns_dict["BC"] = [column_data, column_normal]
-                data = data.astype(self.dtype)
-                data_normal = data_normal.astype(self.dtype)
-                return data, data_normal
-
-            if config.bc.random_sampling:
-                data = self._random_boundary_points(config.bc.size)
-            else:
-                data = self._grid_boundary_points(config.bc.size)
-            column_data = self.name + "_BC_points"
-            self.columns_dict["BC"] = [column_data]
-            data = data.astype(self.dtype)
-            return data
-        raise ValueError("Unknown geom_type: {}, only \"domain/BC\" are supported for {}:{}".format(
-            geom_type, self.geom_type, self.name))
-
     def _random_boundary_points(self, n, random="uniform"):
         """get boundary points randomly"""
         # each number represents the disance between the starting vertex and the ending vertex along the edges
@@ -220,6 +220,7 @@ class Polygon(Geometry):
             x[i, :] = self.vertices[index - 1, :] + l2 / self.diagonals[index - 1, index % self.nvertices] \
                       * (self.vertices[index % self.nvertices, :] - self.vertices[index - 1, :])
         return x
+
 
 def is_on_line_segment(p0, p1, p2):
     """ Whether a point is between two other points on a line segment.
