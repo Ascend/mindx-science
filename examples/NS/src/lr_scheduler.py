@@ -27,6 +27,7 @@ class _LRScheduler:
         self.steps_per_epoch = steps_per_epoch
         self.total_steps = int(max_epoch * steps_per_epoch)
 
+    @staticmethod
     def get_lr(self):
         # Compute learning rate using chainable form of the scheduler
         raise NotImplementedError

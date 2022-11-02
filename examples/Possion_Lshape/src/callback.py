@@ -95,6 +95,9 @@ class PredictCallback(Callback):
 
             self.l2_error = self._calculate_error(label, prediction)
 
+    def get_l2_error(self):
+        return self.l2_error
+
     def _calculate_error(self, label, prediction):
         """calculate l2-error to evaluate accuracy"""
         self._step_counter += 1
@@ -104,6 +107,3 @@ class PredictCallback(Callback):
         l2_error_u = np.sqrt(np.sum(np.square(error))) / np.sqrt(np.sum(np.square(label)))
         print("l2_error, u: ", l2_error_u)
         return l2_error_u
-
-    def get_l2_error(self):
-        return self.l2_error

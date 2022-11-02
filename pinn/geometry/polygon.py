@@ -129,28 +129,6 @@ class Polygon(Geometry):
         # in case in last iteration, the number of new-generated points is so large that total nums is bigger than n
         return x[:n]
 
-    def _random_boundary_points(self, n, random="uniform"):
-        """get boundary points randomly"""
-        # each number represents the disance between the starting vertex and the ending vertex along the edges
-        # so the generated new data, multiplied by perimeter, can be projected to the required interval
-        u = np.ravel(sample(n, 1, random)) * self.perimeter
-        # to confirm the corresponding coordinates of the sampled point according to the random distance
-        distance = np.empty((self.nvertices + 1, 1))
-        distance[0] = 0
-        for i in range(1, self.nvertices):
-            distance[i] = self.diagonals[i - 1, i]  # the length of each edge
-        distance[-1] = self.diagonals[-1, 0]
-        distance = distance.cumsum(axis=0)
-        x = np.empty((n, 2))
-        for i in range(n):
-            index = 0
-            while (distance[index] < u[i]):
-                index += 1
-            l2 = u[i] - distance[index - 1]
-            x[i, :] = self.vertices[index - 1, :] + l2 / self.diagonals[index - 1, index % self.nvertices] \
-                      * (self.vertices[index % self.nvertices, :] - self.vertices[index - 1, :])
-        return x
-
     def sampling(self, geom_type="domain"):
         """
         sampling points
@@ -221,6 +199,27 @@ class Polygon(Geometry):
         raise ValueError("Unknown geom_type: {}, only \"domain/BC\" are supported for {}:{}".format(
             geom_type, self.geom_type, self.name))
 
+    def _random_boundary_points(self, n, random="uniform"):
+        """get boundary points randomly"""
+        # each number represents the disance between the starting vertex and the ending vertex along the edges
+        # so the generated new data, multiplied by perimeter, can be projected to the required interval
+        u = np.ravel(sample(n, 1, random)) * self.perimeter
+        # to confirm the corresponding coordinates of the sampled point according to the random distance
+        distance = np.empty((self.nvertices + 1, 1))
+        distance[0] = 0
+        for i in range(1, self.nvertices):
+            distance[i] = self.diagonals[i - 1, i]  # the length of each edge
+        distance[-1] = self.diagonals[-1, 0]
+        distance = distance.cumsum(axis=0)
+        x = np.empty((n, 2))
+        for i in range(n):
+            index = 0
+            while (distance[index] < u[i]):
+                index += 1
+            l2 = u[i] - distance[index - 1]
+            x[i, :] = self.vertices[index - 1, :] + l2 / self.diagonals[index - 1, index % self.nvertices] \
+                      * (self.vertices[index % self.nvertices, :] - self.vertices[index - 1, :])
+        return x
 
 def is_on_line_segment(p0, p1, p2):
     """ Whether a point is between two other points on a line segment.
