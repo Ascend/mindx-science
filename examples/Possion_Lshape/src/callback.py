@@ -24,6 +24,7 @@ from mindspore.train.summary import SummaryRecord
 from mindspore import Tensor
 import mindspore.common.dtype as mstype
 
+
 class PredictCallback(Callback):
     """
     Monitor the prediction accuracy in training.
@@ -45,21 +46,21 @@ class PredictCallback(Callback):
         self.vision_path = config.get("vision_path", "./vision")
         self.summary_dir = config.get("summary_path", "./summary")
 
-        self.output_size = config.get("output_size", 1) #ok
-        self.input_size = config.get("input_size", 2) #ok
-        self.output_scale = np.array(config["output_scale"], dtype=np.float32) #ok
-        self.predict_interval = config.get("predict_interval", 150) #ok
-        self.batch_size = config.get("test_batch_size", 64) #ok
+        self.output_size = config.get("output_size", 1)
+        self.input_size = config.get("input_size", 2)
+        self.output_scale = np.array(config["output_scale"], dtype=np.float32)
+        self.predict_interval = config.get("predict_interval", 150)
+        self.batch_size = config.get("test_batch_size", 64)
         '''
         self.dx = inputs[0, 1, 0, 0] - inputs[0, 0, 0, 0]
         self.dy = inputs[0, 0, 1, 1] - inputs[0, 0, 0, 1]
         print("check yee delta: {}, {}, {}".format(self.dx, self.dy, self.dt))
         '''
-        self.u_inputs = copy.deepcopy(inputs)#ok
-        self.u_inputs = self.u_inputs.reshape(-1, self.input_size)#ok
-        self.inputs_each = [self.u_inputs]#ok
+        self.u_inputs = copy.deepcopy(inputs)
+        self.u_inputs = self.u_inputs.reshape(-1, self.input_size)
+        self.inputs_each = [self.u_inputs]
         self._step_counter = 0
-        self.l2_error = (1.0)#ok
+        self.l2_error = (1.0)
 
     def epoch_end(self, run_context):
         """

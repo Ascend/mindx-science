@@ -15,8 +15,9 @@
 
 from mindelec.loss import Constraints as C
 
+
 class Constraints(C):
-    def __init__(self,dataset, pde_dict):
+    def __init__(self, dataset, pde_dict):
         super(Constraints, self).__init__(dataset, pde_dict)
 
 

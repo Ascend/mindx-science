@@ -18,6 +18,7 @@ from mindelec.geometry.geometry_base import Geometry as GEO
 from mindelec.geometry.geometry_base import PartSamplingConfig as PSC
 from mindelec.geometry.geometry_base import SamplingConfig as SC
 
+
 class Geometry(GEO):
     def __init__(self, name, dim, coord_min, coord_max, dtype=np.float32, sampling_config=None):
         super(Geometry, self).__init__(name, dim, coord_min, coord_max, dtype, sampling_config)
@@ -29,5 +30,5 @@ class PartSamplingConfig(PSC):
 
 
 class SamplingConfig(SC):
-    def __init__(self,part_sampling_dict):
+    def __init__(self, part_sampling_dict):
         super(SamplingConfig, self).__init__(part_sampling_dict)

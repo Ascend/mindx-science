@@ -15,6 +15,7 @@
 
 from mindelec.common import L2 as L2metric
 
+
 class L2(L2metric):
     def __init__(self):
         super(L2, self).__init__()

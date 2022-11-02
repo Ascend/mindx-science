@@ -24,5 +24,5 @@ class TimeDomain(TD):
 
 
 class GeometryWithTime(GWT):
-    def __init__(self,geometry, timedomain, sampling_config=None):
+    def __init__(self, geometry, timedomain, sampling_config=None):
         super(GeometryWithTime, self).__init__(geometry, timedomain, sampling_config)

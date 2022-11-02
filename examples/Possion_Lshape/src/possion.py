@@ -27,7 +27,7 @@ from pinn.solver import Problem
 from pinn.operators import SecondOrderGrad, Grad
 
 
-class Possion_equation(Problem):
+class PossionEquation(Problem):
     r"""
     The 2D Maxwell's equations with 2nd-order Mur absorbed boundary condition.
 
@@ -40,7 +40,7 @@ class Possion_equation(Problem):
         ic_name (str): The corresponding column name of data which governed by initial condition.
     """
     def __init__(self, model, config, domain_name=None, bc_name=None, bc_normal=None):
-        super(Possion_equation, self).__init__()
+        super(PossionEquation, self).__init__()
         self.domain_name = domain_name
         self.bc_name = bc_name
         self.bc_normal = bc_normal
@@ -57,7 +57,7 @@ class Possion_equation(Problem):
         self.tile = ops.Tile()
 
         # src space
-        self.num_edges = 6 #len(config["vertex_list"])
+        self.num_edges = 6   # len(config["vertex_list"])
         self.vertex_list = config["vertex_list"]
         self.coord_min = config["coord_min"]
         self.coord_max = config["coord_max"]

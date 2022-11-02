@@ -28,6 +28,7 @@ from scipy import interpolate
 
 plt.rcParams['figure.dpi'] = 300
 
+
 def visual_result(input_data, label, predict, path, name):
     """visulization of original field and normalized field"""
     input_data = copy.deepcopy(input_data)
@@ -60,6 +61,7 @@ def visual_result(input_data, label, predict, path, name):
     predict[:, :, :, 1] = 2 * (predict[:, :, :, 1] - np.mean([ey_max, ey_min])) / (ey_max - ey_min)
     predict[:, :, :, 2] = 2 * (predict[:, :, :, 2] - np.mean([hz_max, hz_min])) / (hz_max - hz_min)
     visual(input_data, label, predict, path, str(name) + "_normlize")
+
 
 def visual(input_data, label, predict, path, name):
     """visulization of ex/ey/hz"""
@@ -166,22 +168,23 @@ def visual(input_data, label, predict, path, name):
 
     video.release()
 
+
 def cloud_picture(inputs, label, prediction, path):
-    X = np.linspace(-1, 1, 1000)
-    Y = np.linspace(-1, 1, 1000)
+    x = np.linspace(-1, 1, 1000)
+    y = np.linspace(-1, 1, 1000)
     # 生成二维数据坐标点，可以想象成围棋棋盘上的一个个落子点
-    X1, Y1 = np.meshgrid(X, Y)
+    x1, y1 = np.meshgrid(x, y)
     fig, (ax1,ax2) = plt.subplots(nrows=1, ncols=2)
     # 通过griddata函数插值得到所有的(X1, Y1)处对应的值，原始数据为Coordx, Coordy, Strain
-    Z_label = interpolate.griddata((inputs[:, 0], inputs[:, 1]), label, (X1, Y1), method='cubic')
-    Z_pred = interpolate.griddata((inputs[:, 0], inputs[:, 1]), prediction, (X1, Y1), method='cubic')
-    Z_label = Z_label.squeeze()
-    Z_pred = Z_pred.squeeze()
+    z_label = interpolate.griddata((inputs[:, 0], inputs[:, 1]), label, (x1, y1), method='cubic')
+    z_pred = interpolate.griddata((inputs[:, 0], inputs[:, 1]), prediction, (x1, y1), method='cubic')
+    z_label = z_label.squeeze()
+    z_pred = z_pred.squeeze()
 
     # level设置云图颜色范围以及颜色梯度划分，只能显示0-601范围数值，每间隔20颜色变化
-    levels = np.linspace(0,0.2,100).tolist()
-    cset1 = ax1.contourf(X1, Y1, Z_label, levels, cmap=cm.jet, corner_mask=False)
-    cset2 = ax2.contourf(X1, Y1, Z_pred, levels, cmap=cm.jet, corner_mask=False)
+    levels = np.linspace(0, 0.2, 100).tolist()
+    cset1 = ax1.contourf(x1, y1, z_label, levels, cmap=cm.jet, corner_mask=False)
+    cset2 = ax2.contourf(x1, y1, z_pred, levels, cmap=cm.jet, corner_mask=False)
     # 设置cmap为jet，最小值为蓝色，最大为红色，和有限元软件云图配色类似
 
     # 设置图片在屏幕中出现的位置
@@ -201,7 +204,7 @@ def cloud_picture(inputs, label, prediction, path):
     # 设置colorbar的刻度，标签
     cbar = fig.colorbar(cset1)
     cbar.set_label('u', size=15)
-    cbar.set_ticks([0,0.2])
+    cbar.set_ticks([0, 0.2])
 
     # 保存图片，bbox_inches设置图片周边空白的大小
     fig.savefig("result" + ".png", bbox_inches='tight', dpi=150, pad_inches=0.1)

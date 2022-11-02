@@ -22,6 +22,7 @@ from mindspore import nn
 from mindspore import ops
 from mindspore import Tensor, Parameter
 
+
 def _transfer_tensor_to_tuple(inputs):
     """
     If the input is a tensor, convert it to a tuple. If not, the output is unchanged.
@@ -35,7 +36,8 @@ def _transfer_tensor_to_tuple(inputs):
 class SupervisedNetWithLoss(NetWithLoss):
     def __init__(self, net_without_loss, constraints, loss="l2", dataset_input_map=None,
                  mtl_weighted_cell=None, latent_vector=None, latent_reg=0.01):
-        super(SupervisedNetWithLoss, self).__init__(net_without_loss,constraints,loss,dataset_input_map,mtl_weighted_cell,latent_vector,latent_reg)
+        super(SupervisedNetWithLoss, self).__init__(net_without_loss, constraints, loss, dataset_input_map,
+                                                    mtl_weighted_cell, latent_vector, latent_reg)
         self.label_mark = constraints.label_data
 
     def construct(self, *inputs):
@@ -43,7 +45,7 @@ class SupervisedNetWithLoss(NetWithLoss):
         loss = {}
         total_loss = self.zero
         for name in self.dataset_columns_map.keys():
-            if not self.judgeLabel(name):
+            if not self.judge_label(name):
                 columns_list = self.dataset_columns_map[name]
                 input_data = {}
                 for column_name in columns_list:
@@ -65,13 +67,13 @@ class SupervisedNetWithLoss(NetWithLoss):
                 input_data = {}
                 label_data = {}
                 for column_name in columns_list:
-                    input_data[column_name] = data[self.column_index_map[column_name]][...,:idx]
-                    label_data = data[self.column_index_map[column_name]][...,idx:]
+                    input_data[column_name] = data[self.column_index_map[column_name]][..., :idx]
+                    label_data = data[self.column_index_map[column_name]][..., idx:]
                 net_input = ()
                 for column_name in self.dataset_input_map[name]:
-                    net_input += (data[self.column_index_map[column_name]][...,:idx],)
+                    net_input += (data[self.column_index_map[column_name]][..., :idx],)
                 out = self.net_without_loss(*net_input)
-                base = out[...,0:2]
+                base = out[..., 0:2]
                 temp_loss = self.reduce_mean(self.loss_fn_dict[name](base, label_data))
                 loss[name] = temp_loss
                 total_loss += temp_loss
@@ -88,7 +90,7 @@ class SupervisedNetWithLoss(NetWithLoss):
 
         return total_loss
 
-    def judgeLabel(self,dataset_name):
+    def judge_label(self, dataset_name):
         '''
         Args:
             dataset_name:

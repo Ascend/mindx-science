@@ -20,8 +20,9 @@ from mindelec.architecture.basic_block import InputScaleNet as IS
 from mindelec.architecture.basic_block import FCSequential as FC
 from mindelec.architecture.basic_block import MultiScaleFCCell as MSFC
 
+
 class FCSequential(FC):
-    def __init__(self,in_channel,
+    def __init__(self, in_channel,
                  out_channel,
                  layers,
                  neurons,
@@ -30,10 +31,12 @@ class FCSequential(FC):
                  weight_init='normal',
                  has_bias=True,
                  bias_init='default'):
-        super(FCSequential, self).__init__(in_channel, out_channel, layers, neurons, residual, act, weight_init, has_bias, bias_init)
+        super(FCSequential, self).__init__(in_channel, out_channel, layers, neurons, residual, act,
+                                           weight_init, has_bias, bias_init)
+
 
 class MultiScaleFCCell(MSFC):
-    def __init__(self,in_channel,
+    def __init__(self, in_channel,
                  out_channel,
                  layers,
                  neurons,
@@ -48,7 +51,10 @@ class MultiScaleFCCell(MSFC):
                  input_scale=None,
                  input_center=None,
                  latent_vector=None):
-        super(MultiScaleFCCell, self).__init__(in_channel, out_channel, layers, neurons, residual, act, weight_init, has_bias, bias_init, num_scales, amp_factor, scale_factor, input_scale, input_center, latent_vector)
+        super(MultiScaleFCCell, self).__init__(in_channel, out_channel, layers, neurons, residual, act, weight_init,
+                                               has_bias, bias_init, num_scales, amp_factor, scale_factor, input_scale,
+                                               input_center, latent_vector)
+
 
 class Schrodinger_Net(nn.Cell):
     def __init__(self):

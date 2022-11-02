@@ -15,13 +15,13 @@
 """
 create dataset
 """
-import numpy as np
 import copy
+import numpy as np
 from pinn.data import Dataset, ExistedDataConfig
 from pinn.geometry import Rectangle, Geometry, CSGDifference, create_config_from_edict
 from pinn.geometry import Polygon
+from .sampling_config import polygon_sampling_config
 
-from .sampling_config import *
 
 def get_test_data(test_data_path):
     """load labeled data for evaluation"""
@@ -29,6 +29,7 @@ def get_test_data(test_data_path):
     inputs = data['X_test']
     label = data['y_ref']
     return inputs, label
+
 
 def create_random_dataset(config):
     if config["method"] == "difference":

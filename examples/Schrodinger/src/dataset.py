@@ -18,9 +18,9 @@ from mindspore import Tensor
 from mindelec.common import PI
 from scipy import io
 import numpy as np
-from mindelec.data import Dataset
+from pinn.data import Dataset
 from pinn.geometry import create_config_from_edict, TimeDomain, GeometryWithTime, Interval
-from .sampling_config import *
+from .sampling_config import line_config
 
 
 def get_test_data(test_data_path):
@@ -28,15 +28,15 @@ def get_test_data(test_data_path):
     data = io.loadmat(test_data_path)
     t = data['tt'].flatten()
     x = data['x'].flatten()
-    Feature = data['uu']
-    Feature_u = np.real(Feature)
-    Feature_v = np.imag(Feature)
+    feature = data['uu']
+    feature_u = np.real(feature)
+    feature_v = np.imag(feature)
     features = []
     labels = []
     for i in range(len(x)):
         for j in range(len(t)):
             features.append([x[i], t[j]])
-            labels.append([Feature_u[i][j], Feature_v[i][j]])
+            labels.append([feature_u[i][j], feature_v[i][j]])
     features = Tensor(features, dtype=mindspore.float32)
     labels = Tensor(labels, dtype=mindspore.float32)
     return features, labels

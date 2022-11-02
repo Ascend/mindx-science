@@ -15,6 +15,8 @@
 
 from mindelec.data import ExistedDataConfig as EDC
 
+
 class ExistedDataConfig(EDC):
-    def __init__(self,name, data_dir, columns_list, data_format="npy", constraint_type="Label", random_merge=True):
-        super(ExistedDataConfig, self).__init__(name, data_dir, columns_list, data_format, constraint_type, random_merge)
+    def __init__(self, name, data_dir, columns_list, data_format="npy", constraint_type="Label", random_merge=True):
+        super(ExistedDataConfig, self).__init__(name, data_dir, columns_list, data_format, constraint_type,
+                                                random_merge)

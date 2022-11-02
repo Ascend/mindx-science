@@ -26,8 +26,9 @@ from mindspore.train.serialization import load_checkpoint, load_param_into_net
 
 import src.dataset
 
-sys.path.append(str(Path(__file__).resolve().parents[2]))
 from pinn.architecture import Schrodinger_Net
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+
 
 
 context.set_context(mode=context.GRAPH_MODE, save_graphs=False, device_target="Ascend", save_graphs_path="./graph")
@@ -47,7 +48,8 @@ def evaluation(config):
     inputs, label = src.dataset.get_test_data(config["test_data_path"])
     time_beg = time.time()
     predict = model(inputs)
-    print('example for 8000 to 8050:\n', np.concatenate((predict[8000:8050].asnumpy(), label[8000:8050].asnumpy()), axis=1))
+    print('example for 8000 to 8050:\n', np.concatenate((predict[8000:8050].asnumpy()
+                                                         , label[8000:8050].asnumpy()), axis=1))
     print("predict total time: {} s".format(time.time() - time_beg))
 
     # get accuracy

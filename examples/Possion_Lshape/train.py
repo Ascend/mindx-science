@@ -32,7 +32,7 @@ from pinn.common import L2
 from pinn.architecture import MultiScaleFCCell, MTLWeightedLossCell, FCSequential
 
 from src import get_test_data, create_random_dataset
-from src.Possion import Possion_equation
+from src.possion import Possion_equation
 from src import MultiStepLR, PredictCallback
 
 

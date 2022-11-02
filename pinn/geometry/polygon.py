@@ -38,6 +38,7 @@ class Polygon(Geometry):
     Supported Platforms:
         ``Ascend``
     """
+
     def __init__(self, name, vertices):
         self.nvertices = len(vertices)
         self.vertices, self.area = polygon_area(vertices)
@@ -47,10 +48,11 @@ class Polygon(Geometry):
         super().__init__(
             name,
             2,
-            [int(np.min(self.vertices[:,0])),int(np.min(self.vertices[:,1]))],
-            [int(np.max(self.vertices[:,0])),int(np.max(self.vertices[:,1]))])
+            [int(np.min(self.vertices[:, 0])), int(np.min(self.vertices[:, 1]))],
+            [int(np.max(self.vertices[:, 0])), int(np.max(self.vertices[:, 1]))])
 
-        self.perimeter = np.sum([self.diagonals[i, i + 1] for i in range(-1, self.nvertices - 1)]) #sum of all lengths of edges
+        self.perimeter = np.sum([self.diagonals[i, i + 1]
+                                 for i in range(-1, self.nvertices - 1)])  # sum of all lengths of edges
         # calculate the normal vector of the edges
         self.normal = normal_vector(self.vertices)
         self.columns_dict = {}
@@ -65,24 +67,27 @@ class Polygon(Geometry):
             judge: true means inside and false means outside.
         """
 
-        def isleft(P0, P1, P2):
-            return np.cross(P1 - P0, P2 - P0, axis=-1).reshape((1, -1))
+        def isleft(p0, p1, p2):
+            return np.cross(p1 - p0, p2 - p0, axis=-1).reshape((1, -1))
 
         py = points[:, 1]
         is_in = np.zeros(len(points))
 
         for i in range(self.nvertices):
-            condition1 = np.logical_and(np.logical_and(self.vertices[i, 1] <= py, self.vertices[(i + 1) % self.nvertices, 1] > py),
-                                        isleft(self.vertices[i, :], self.vertices[(i + 1) % self.nvertices, :], points) > 0)
+            condition1 = np.logical_and(np.logical_and(self.vertices[i, 1] <= py,
+                                                       self.vertices[(i + 1) % self.nvertices, 1] > py),
+                                        isleft(self.vertices[i, :],
+                                               self.vertices[(i + 1) % self.nvertices, :], points) > 0)
 
-            condition2 = np.logical_and(np.logical_and(self.vertices[i, 1] > py, self.vertices[(i + 1) % self.nvertices, 1] <= py),
-                                        isleft(self.vertices[i, :], self.vertices[(i + 1) % self.nvertices, :], points) < 0)
+            condition2 = np.logical_and(np.logical_and(self.vertices[i, 1] > py,
+                                                       self.vertices[(i + 1) % self.nvertices, 1] <= py),
+                                        isleft(self.vertices[i, :],
+                                               self.vertices[(i + 1) % self.nvertices, :], points) < 0)
             condition1 = condition1.astype(int).reshape(-1)
             condition2 = condition2.astype(int).reshape(-1)
             is_in += condition1
             is_in -= condition2
         return is_in != 0
-
 
     def _on_boundary(self, points):
         """whether on geometry's boundary
@@ -96,7 +101,8 @@ class Polygon(Geometry):
             for j in range(-1, self.nvertices - 1):
                 vector_a = vertices_i[j, :]
                 vector_b = vertices_i[j + 1, :]
-                if(np.dot(vector_a, vector_b) + np.linalg.norm(vector_a) + np.linalg.norm(vector_b) == 0):
+                if (np.dot(vector_a, vector_b) + np.linalg.norm(vector_a)
+                        + np.linalg.norm(vector_b) == 0):
                     _on[i] = 0
                     break
         return _on == 0
@@ -111,7 +117,8 @@ class Polygon(Geometry):
     def _random_domain_points(self, n, random="uniform"):
         """randomly generate domain points"""
         x = np.empty((0, 2))
-        two_d_range = np.array([np.min(self.vertices, axis=0), np.max(self.vertices, axis=0)])  # 2-D range of the polygon
+        two_d_range = np.array(
+            [np.min(self.vertices, axis=0), np.max(self.vertices, axis=0)])  # 2-D range of the polygon
         range_difference = two_d_range[1, :] - two_d_range[0, :]
         # sample new boundary points repeatly until sample enough points
         while len(x) < n:
@@ -133,11 +140,11 @@ class Polygon(Geometry):
         for i in range(1, self.nvertices):
             distance[i] = self.diagonals[i - 1, i]  # the length of each edge
         distance[-1] = self.diagonals[-1, 0]
-        distance = distance.cumsum(axis = 0)
+        distance = distance.cumsum(axis=0)
         x = np.empty((n, 2))
         for i in range(n):
             index = 0
-            while(distance[index] < u[i]):
+            while (distance[index] < u[i]):
                 index += 1
             l2 = u[i] - distance[index - 1]
             x[i, :] = self.vertices[index - 1, :] + l2 / self.diagonals[index - 1, index % self.nvertices] \
@@ -214,16 +221,18 @@ class Polygon(Geometry):
         raise ValueError("Unknown geom_type: {}, only \"domain/BC\" are supported for {}:{}".format(
             geom_type, self.geom_type, self.name))
 
-def is_on_line_segment(P0, P1, P2):
+
+def is_on_line_segment(p0, p1, p2):
     """ Whether a point is between two other points on a line segment.
     Args:
         P0: One point in the line.
         P1: One point in the line.
         P2: The point to be tested.
     """
-    v02 = P2 - P0
-    v12 = P2 - P1
+    v02 = p2 - p0
+    v12 = p2 - p1
     return np.dot(v02, v12) + np.linalg.norm(v02) + np.linalg.norm(v12) == 0
+
 
 def polygon_area(vertices):
     """The area of a polygon.
@@ -243,6 +252,7 @@ def polygon_area(vertices):
         return np.flipud(vertices), -area
     else:
         return vertices, area
+
 
 def normal_vector(vertices):
     segments = vertices[1:] - vertices[:-1]

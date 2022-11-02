@@ -17,12 +17,11 @@ import os
 import json
 import time
 from pathlib import Path
-
-import numpy as np
 import sys
 
-from mindspore.common import *
-from mindspore.common.initializer import *
+import numpy as np
+
+from mindspore.common import set_seed
 from mindspore import context, Tensor, nn
 from mindspore.train.callback import ModelCheckpoint, CheckpointConfig
 from mindspore.train.serialization import load_checkpoint, load_param_into_net
@@ -34,7 +33,7 @@ from pinn.architecture import Schrodinger_Net
 
 from src.dataset import get_test_data, create_random_dataset
 from src.callback import TlossCallback
-from src.Schrodinger import Schrodinger
+from src.schrodinger import Schrodinger
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
