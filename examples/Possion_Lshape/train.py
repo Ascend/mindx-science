@@ -71,7 +71,7 @@ def train(config):
                              amp_factor=config["amp_factor"],
                              scale_factor=config["scale_factor"]
                              )
-
+    model.to_float(mstype.float16)
     '''
     model = FCSequential(in_channel=config["input_size"],
                          out_channel=config["output_size"],
@@ -106,7 +106,6 @@ def train(config):
         load_param_into_net(mtl, param_dict)
 
     # define solver
-    # not quite sure
     solver = Solver(model,
                     optimizer=optim,
                     mode="PINNs",
@@ -115,9 +114,7 @@ def train(config):
                     metrics={'l2': L2(), 'distance': nn.MSE()},
                     loss_fn=nn.MSELoss(),
                     loss_scale_manager=DynamicLossScaleManager(),
-                    mtl_weighted_cell=mtl,
-                    amp_level="O3"
-                    )
+                    mtl_weighted_cell=mtl)
     print("steps_per_epoch=", steps_per_epoch)
     loss_time_callback = LossAndTimeMonitor(steps_per_epoch)
     callbacks = [loss_time_callback]
