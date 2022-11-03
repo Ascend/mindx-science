@@ -32,7 +32,7 @@ from pinn.common import L2
 from pinn.architecture import MultiScaleFCCell, MTLWeightedLossCell, FCSequential
 
 from src import get_test_data, create_random_dataset
-from src.possion import Possion_equation
+from src.possion import PossionEquation
 from src import MultiStepLR, PredictCallback
 
 
@@ -90,7 +90,7 @@ def train(config):
     train_prob = {}
     for dataset in elec_train_dataset.all_datasets:
         print(dataset)
-        train_prob[dataset.name] = Possion_equation(model=model, config=config,
+        train_prob[dataset.name] = PossionEquation(model=model, config=config,
                                                 domain_name=dataset.name + "_points",
                                                 bc_name=dataset.name + "_points")
     print("check problem: ", train_prob)
