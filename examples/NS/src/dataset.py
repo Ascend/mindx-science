@@ -38,27 +38,24 @@ def create_train_dataset(config):
     src_region = GeometryWithTime(rectangle, time_interval)
     src_region.set_name("src")
     src_region.set_sampling_config(create_config_from_edict(src_sampling_config))
-    boundary = GeometryWithTime(rectangle, time_interval)
-    boundary.set_name("bc")
-    boundary.set_sampling_config(create_config_from_edict(bc_sampling_config))
 
     geom_dict = {src_region: ["domain"],
                  }
 
     ob_xyt = ExistedDataConfig(name='ob_xyt',
-                                    data_dir=[config["train_data_path"][0]],
-                                    columns_list=['points'],
-                                    data_format="npy",
-                                    constraint_type="Equation")
+                               data_dir=[config["train_data_path"][0]],
+                               columns_list=['points'],
+                               data_format="npy",
+                               constraint_type="Equation")
 
     "-----------------------------------------------------------------------"
     "以下是有监督数据，[x,y,t,u/v/p] 四维，修改了mindelec中的nei_with_loss对label进行特殊处理来计算有监督数据的损失"
 
     ob_uv = ExistedDataConfig(name='ob_uv',
-                             data_dir=[config["train_data_path"][1]],
-                             columns_list=['points'],
-                             data_format="npy",
-                             constraint_type="Equation")
+                              data_dir=[config["train_data_path"][1]],
+                              columns_list=['points'],
+                              data_format="npy",
+                              constraint_type="Equation")
 
     dataset = SupervisedDataset(geom_dict, existed_data_list=[ob_xyt, ob_uv], label_data={"ob_uv": 3})
     return dataset

@@ -77,7 +77,7 @@ class PossionEquation(Problem):
     def governing_equation(self, *output, **kwargs):
         """maxwell equation of TE mode wave"""
         u = output[0]
-        data = kwargs.get(self.domain_name)
+        data = kwargs[self.domain_name]
         du_dxx = self.grad1(data)
         du_dyy = self.grad2(data)
         return 1 + du_dxx + du_dyy

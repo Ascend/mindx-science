@@ -45,7 +45,6 @@ np.random.seed(123456)
 
 
 def train(config):
-
     # 动态图or静态图
     context.set_context(mode=context.GRAPH_MODE, save_graphs=True, device_target=config["device_target"],
                         device_id=config["device_id"], save_graphs_path="./graph")
@@ -58,7 +57,6 @@ def train(config):
                                                       prebatched_data=True, shuffle=False)
 
     steps_per_epoch = len(elec_train_dataset)
-
 
     """创建模型"""
 
@@ -85,15 +83,14 @@ def train(config):
     train_prob = {}
     for dataset in elec_train_dataset.all_datasets:
         train_prob[dataset.name] = NsEquation(model=model, c1=c1, c2=c2, config=config,
-                                                        domain_name=dataset.name+"_points",
-                                                        bc_name=dataset.name+"_points",
-                                                        ic_name=dataset.name+"_points")
+                                              domain_name=dataset.name + "_points",
+                                              bc_name=dataset.name + "_points",
+                                              ic_name=dataset.name + "_points")
 
     train_constraints = SupervisedConstraints(elec_train_dataset, train_prob)
 
-
     """优化器"""
-    params = model.trainable_params() + mtl.trainable_params()+[c1, c2]
+    params = model.trainable_params() + mtl.trainable_params() + [c1, c2]
     lr_scheduler = MultiStepLR(config["lr"], config["milestones"],
                                config["lr_gamma"], steps_per_epoch, config["train_epoch"])
     lr = lr_scheduler.get_lr()
@@ -105,16 +102,16 @@ def train(config):
         load_param_into_net(mtl, param_dict)
     # define solver
     solver = SupervisedSolver(model,
-                    optimizer=optim,
-                    mode="PINNs",
-                    train_constraints=train_constraints,
-                    test_constraints=None,
-                    metrics={'l2': L2(), 'distance': nn.MAE()},
-                    loss_fn=nn.MSELoss(),
-                    loss_scale_manager=DynamicLossScaleManager(),
-                    amp_level="O0",
-                    mtl_weighted_cell=mtl,
-                    )
+                              optimizer=optim,
+                              mode="PINNs",
+                              train_constraints=train_constraints,
+                              test_constraints=None,
+                              metrics={'l2': L2(), 'distance': nn.MAE()},
+                              loss_fn=nn.MSELoss(),
+                              loss_scale_manager=DynamicLossScaleManager(),
+                              amp_level="O3",
+                              mtl_weighted_cell=mtl,
+                              )
 
     test_input, test_label = test_data_prepare(config)
 
@@ -130,8 +127,8 @@ def train(config):
                                      directory=config["save_ckpt_path"], config=config_ck)
         callbacks += [ckpoint_cb]
 
-
     solver.train(config["train_epoch"], train_dataset, callbacks=callbacks, dataset_sink_mode=True)
+
 
 if __name__ == '__main__':
     configs = json.load(open("./config.json"))
