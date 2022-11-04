@@ -26,10 +26,7 @@ from mindspore.train.serialization import load_checkpoint, load_param_into_net
 
 import src.dataset
 
-from pinn.architecture import SchrodingerNet
-sys.path.append(str(Path(__file__).resolve().parents[2]))
-
-
+from src.architecture import SchrodingerNet
 
 context.set_context(mode=context.GRAPH_MODE, save_graphs=False, device_target="Ascend", save_graphs_path="./graph")
 

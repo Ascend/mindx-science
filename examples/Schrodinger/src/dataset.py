@@ -19,7 +19,7 @@ from mindelec.common import PI
 from scipy import io
 import numpy as np
 from pinn.data import Dataset
-from pinn.geometry import create_config_from_edict, TimeDomain, GeometryWithTime, Interval
+from mindelec.geometry import create_config_from_edict, TimeDomain, GeometryWithTime, Interval
 from .sampling_config import line_config
 
 
