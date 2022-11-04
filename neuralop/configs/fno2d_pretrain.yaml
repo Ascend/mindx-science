@@ -1,0 +1,32 @@
+data:
+  train_path: /root/wpy/data/piececonst_r241_N1024_smooth1.mat
+  test_path: /root/wpy/data/piececonst_r241_N1024_smooth2.mat
+  ntrain: 1000
+  ntest: 100
+  r: 16
+  h: 16
+  batch_size: 20
+
+model:
+  name: fno2d
+  modes1: 12
+  modes2: 12
+  width: 32
+
+train:
+  mix_prec: true
+  epoch: 500
+  base_lr: 1.e-3
+  weight_decay: 1.e-4
+  scheduler_gamma: 0.5
+  decay_per_epoch: 100
+  # load_path: ckpt/ms/fno2d_pretrain.ckpt
+  save_per_epoch: 100
+  save_path: ckpt/ms/fno2d_pretrain
+  # save_path: ckpt/torch/fno2d_pretrain
+  profile: false
+  profiler_path: ./profiler
+
+test:
+  load_path: ckpt/ms/fno2d_pretrain.ckpt
+

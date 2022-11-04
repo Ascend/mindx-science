@@ -1,0 +1,34 @@
+data:
+  train_path: /root/wjl/data/NavierStokes_V1e-5_N1200_T20.mat 
+  test_path: /root/wjl/data/NavierStokes_V1e-5_N1200_T20.mat 
+  ntrain: 1000
+  ntest: 100
+  batch_size: 20
+  nx: 64
+  sub: 4
+  t_in: 5
+  t: 3
+  step: 1
+
+model:
+  name: 'fno2dtime'
+  modes1: 4
+  modes2: 4
+  width: 20
+
+train:
+  mix_prec: true
+  epoch: 500
+  base_lr: 5.e-3
+  weight_decay: 1.e-4
+  scheduler_gamma: 0.5
+  decay_per_epoch: 100
+  # load_path: ckpt/ms/fno2dtime_pretrain.ckpt
+  save_per_epoch: 100
+  save_path: ckpt/ms/fno2dtime_pretrain
+  # save_path: ckpt/torch/fno2dtime_pretrain
+  profile: false
+  profiler_path: ./profiler
+
+test:
+  load_path: ckpt/ms/fno2dtime_pretrain.ckpt

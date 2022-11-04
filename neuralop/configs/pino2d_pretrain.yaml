@@ -1,0 +1,38 @@
+data:
+  train_path: E:\FNO&PINO\PINO-master\data\piececonst_r421_N1024_smooth1.mat
+  test_path: E:\FNO&PINO\PINO-master\data\piececonst_r421_N1024_smooth2.mat
+  total_num: 1024
+  offset: 0
+  ntrain: 1000
+  ntest: 100
+  nx: 421
+  sub: 30
+  f_weight: 1.0
+  data_weight: 5.0
+  batch_size: 20
+
+model:
+  name: pino2d
+  layers: [64, 64, 64, 64, 64]
+  modes1: [4, 4, 4, 4]
+  modes2: [4, 4, 4, 4]
+  fc_dim: 128
+  activation: gelu
+
+train:
+  mix_prec: true
+  epoch: 500
+  base_lr: 0.001
+  weight_decay: 1.e-4
+  scheduler_gamma: 0.5
+  decay_per_epoch: 50
+  # load_path: ckpt/ms/pino2d_pretrain.ckpt
+  save_per_epoch: 100
+  save_path: ckpt/ms/pino2d_pretrain
+  # save_path: ckpt/torch/pino2d_pretrain
+  profile: false
+  profiler_path: ./profiler/pino2d
+  milestones: [100, 150, 200]
+
+test:
+  load_path: ckpt/ms/pino2d_pretrain.ckpt

@@ -1,0 +1,13 @@
+.DS_Store
+.vscode
+*__pycache__
+.ipynb_checkpoints
+tmp/
+rank_0/
+kernel_meta/
+data/prof_data/
+data/profiler/
+profiler_data/
+profiler/
+*.swp
+*./.log

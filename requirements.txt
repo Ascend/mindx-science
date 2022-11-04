@@ -1,0 +1,7 @@
+h5py==3.6.0
+mindspore==1.8.1
+mindspore_ascend==1.7.0
+numpy==1.22.3
+PyYAML==6.0
+scipy==1.7.3
+torch==1.10.2

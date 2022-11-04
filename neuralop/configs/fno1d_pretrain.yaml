@@ -1,0 +1,29 @@
+data:
+  train_path: /home/huawei/data/burgers_data_R10.mat
+  test_path: /home/huawei/data/burgers_data_R10.mat
+  ntrain: 1000
+  ntest: 100
+  sub: 32
+  batch_size: 20
+
+model:
+  name: fno1d
+  modes: 16
+  width: 64
+
+train:
+  mix_prec: true
+  epoch: 500
+  base_lr: 1.e-2
+  weight_decay: 1.e-4
+  scheduler_gamma: 0.5
+  decay_per_epoch: 50
+  # load_path: ckpt/ms/fno1d_pretrain.ckpt
+  save_per_epoch: 100
+  save_path: ckpt/ms/fno1d_pretrain
+  # save_path: ckpt/torch/fno1d_pretrain
+  profile: false
+  profiler_path: ./profiler
+
+test:
+  load_path: ckpt/ms/fno1d_pretrain.ckpt
