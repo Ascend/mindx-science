@@ -26,7 +26,7 @@ from mindspore.train.serialization import load_checkpoint, load_param_into_net
 
 import src.dataset
 
-from pinn.architecture import Schrodinger_Net
+from pinn.architecture import SchrodingerNet
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
 
@@ -38,7 +38,7 @@ def evaluation(config):
     """evaluation"""
 
     # define network
-    model = Schrodinger_Net()
+    model = SchrodingerNet()
 
     # load parameters
     param_dict = load_checkpoint(config["load_ckpt_path"])

@@ -109,7 +109,7 @@ def train(config):
                               metrics={'l2': L2(), 'distance': nn.MAE()},
                               loss_fn=nn.MSELoss(),
                               loss_scale_manager=DynamicLossScaleManager(),
-                              amp_level="O3",
+                              amp_level="O0",
                               mtl_weighted_cell=mtl,
                               )
 
