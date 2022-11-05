@@ -1,6 +1,6 @@
 data:
-  train_path: /home/wuhan_ms2/data/NS_fft_Re500_T4000.npy
-  test_path: /home/wuhan_ms2/data/NS_fft_Re500_T4000.npy
+  train_path: ./data/NS_fft_Re500_T4000.npy
+  test_path: ./data/NS_fft_Re500_T4000.npy
   Re: 500
   offset: 0
   ntrain: 400

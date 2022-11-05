@@ -1,6 +1,6 @@
 data:
-  train_path: /root/wjl/data/NavierStokes_V1e-5_N1200_T20.mat 
-  test_path: /root/wjl/data/NavierStokes_V1e-5_N1200_T20.mat 
+  train_path: ./data/NavierStokes_V1e-5_N1200_T20.mat 
+  test_path: ./data/NavierStokes_V1e-5_N1200_T20.mat 
   ntrain: 1000
   ntest: 100
   batch_size: 20

@@ -1,6 +1,6 @@
 data:
-  train_path: /home/wuhan_mssci/data/piececonst_r241_N1024_smooth1.mat
-  test_path: /home/wuhan_mssci/data/piececonst_r241_N1024_smooth2.mat
+  train_path: ./data/piececonst_r241_N1024_smooth1.mat
+  test_path: ./data/piececonst_r241_N1024_smooth2.mat
   ntrain: 1000
   ntest: 100
   r: 16

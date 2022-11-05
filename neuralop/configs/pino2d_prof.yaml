@@ -1,6 +1,6 @@
 data:
-  train_path: /home/huawei/data/piececonst_r421_N1024_smooth1.mat
-  test_path: /home/huawei/data/piececonst_r421_N1024_smooth2.mat
+  train_path: ./data/piececonst_r421_N1024_smooth1.mat
+  test_path: ./data/piececonst_r421_N1024_smooth2.mat
   total_num: 1024
   offset: 0
   ntrain: 1000

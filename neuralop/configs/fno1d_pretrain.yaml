@@ -1,6 +1,6 @@
 data:
-  train_path: /home/huawei/data/burgers_data_R10.mat
-  test_path: /home/huawei/data/burgers_data_R10.mat
+  train_path: ./data/burgers_data_R10.mat
+  test_path: ./data/burgers_data_R10.mat
   ntrain: 1000
   ntest: 100
   sub: 32
