@@ -29,13 +29,3 @@ polygon_sampling_config = edict({
         'with_normal': False
     })
 })
-
-'''
-boundary_sampling_config = edict({
-    'BC': edict({
-        'random_sampling': True,
-        'size': 360,
-        'sampler': 'uniform',
-        'with_normal': False
-    })})
-'''
