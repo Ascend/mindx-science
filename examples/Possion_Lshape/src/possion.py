@@ -29,7 +29,7 @@ from pinn.operators import SecondOrderGrad, Grad
 
 class PossionEquation(Problem):
     r"""
-    The 2D Maxwell's equations with 2nd-order Mur absorbed boundary condition.
+    The Possion's equations.
 
     Args:
         model (Cell): The solving network.
@@ -55,27 +55,15 @@ class PossionEquation(Problem):
         self.split = ops.Split(1, 2)
         self.concat = ops.Concat(1)
         self.tile = ops.Tile()
-
-        # src space
-        self.num_edges = 6   # len(config["vertex_list"])
+        self.num_edges = len(config["vertex_list"])
         self.vertex_list = config["vertex_list"]
         self.coord_min = config["coord_min"]
         self.coord_max = config["coord_max"]
         self.coord_mid = config["coord_mid"]
 
-        '''
-        input_scale = config.get("input_scale", [1.0, 1.0, 1.0])
-        output_scale = config.get("output_scale", [1.0, 1.0, 1.0])
-        self.s_x = Tensor(input_scale[0], mstype.float32)
-        self.s_y = Tensor(input_scale[1], mstype.float32)
-        self.s_t = Tensor(input_scale[2], mstype.float32)
-        self.s_ex = Tensor(output_scale[0], mstype.float32)
-        self.s_ey = Tensor(output_scale[1], mstype.float32)
-        self.s_hz = Tensor(output_scale[2], mstype.float32)
-        '''
     @ms_function
     def governing_equation(self, *output, **kwargs):
-        """maxwell equation of TE mode wave"""
+        """Possion equation"""
         u = output[0]
         data = kwargs[self.domain_name]
         du_dxx = self.grad1(data)
@@ -85,26 +73,4 @@ class PossionEquation(Problem):
     @ms_function
     def boundary_condition(self, *output, **kwargs):
         """Dirichlet boundary condition"""
-        u = self.cast(output[0], mstype.float32)
-        '''
-        coord_min = self.coord_min
-        coord_max = self.coord_max
-        coord_mid = self.coord_mid
-        data = kwargs[self.bc_name]
-        batch_size, _ = data.shape
-        bc_all = self.tile(u,(1,self.num_edges))
-        attr = ms_np.zeros(shape=(batch_size, self.num_edges))
-        attr[:, 0] = ms_np.where(ms_np.isclose(data[:, 0], coord_min[0]), 1.0, 0.0)#(-1,-1)-(-1,1)
-        attr[:, 1] = ms_np.where(ms_np.isclose(data[:, 1], coord_max[0]), 1.0, 0.0)#(-1,1)-(0,1)
-        attr[:, 2] = ms_np.where(ms_np.isclose(data[:, 0], coord_mid[0])
-                                 & ms_np.isclose(data[:, 1], 0.5, atol=0.5, rtol=1e-8),
-                                 1.0, 0.0)#(0,1)-(0,0)
-        attr[:, 3] = ms_np.where(ms_np.isclose(data[:, 1], coord_mid[0])
-                                 & ms_np.isclose(data[:, 0], 0.5, atol=0.5, rtol=1e-8),1.0, 0.0)#(0,0)-(1,0)
-        attr[:, 4] = ms_np.where(ms_np.isclose(data[:, 0], coord_max[0]), 1.0, 0.0)#(1,0)-(1,-1)
-        attr[:, 5] = ms_np.where(ms_np.isclose(data[:, 1], coord_min[0]), 1.0, 0.0)#(1,-1)-(-1,-1)
-
-        bc_r = self.mul(bc_all, attr)
-        return bc_r
-        '''
-        return u
+        return self.cast(output[0], mstype.float32)
