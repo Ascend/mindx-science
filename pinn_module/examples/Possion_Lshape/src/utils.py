@@ -185,9 +185,6 @@ def cloud_picture(inputs, label, prediction, path):
     levels = np.linspace(0, 0.2, 100).tolist()
     cset1 = ax1.contourf(x1, y1, z_label, levels, cmap=cm.jet, corner_mask=False)
     cset2 = ax2.contourf(x1, y1, z_pred, levels, cmap=cm.jet, corner_mask=False)
-    # 设置cmap为jet，最小值为蓝色，最大为红色，和有限元软件云图配色类似
-
-    # 设置图片在屏幕中出现的位置
 
     ax1.set_title("label", size=5)  # 设置图名
     ax2.set_title("predict", size=5)  # 设置图名

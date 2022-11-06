@@ -41,7 +41,6 @@ from src.callback import PredictCallback, GetVariableCallback
 from src.ns import NsEquation
 
 set_seed(123456)
-np.random.seed(123456)
 
 
 def train(config):

@@ -1,0 +1,18 @@
+文件夹 PATH 列表
+卷序列号为 0EB6-1A68
+F:.
+├─examples
+│  ├─NS
+│  │  └─src
+│  ├─Possion_Lshape
+│  │  └─src
+│  └─Schrodinger
+│      └─src
+└─pinn
+    ├─architecture
+    ├─common
+    ├─data
+    ├─geometry
+    ├─loss
+    ├─operators
+    └─solver

@@ -16,14 +16,12 @@
 init
 """
 from .dataset import get_test_data, create_random_dataset
-from .lr_scheduler import MultiStepLR
 from .callback import PredictCallback
 from .utils import visual_result
 
 __all__ = [
     "create_random_dataset",
     "get_test_data",
-    "MultiStepLR",
     "PredictCallback",
     "visual_result"
 ]

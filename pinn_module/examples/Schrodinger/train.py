@@ -13,31 +13,30 @@
 # limitations under the License.
 # ============================================================================
 
-"""train process"""
 import os
 import json
 import time
+from pathlib import Path
+import sys
+
 import numpy as np
 
 from mindspore.common import set_seed
-from mindspore.common.initializer import XavierUniform
 from mindspore import context, Tensor, nn
-from mindspore.train import DynamicLossScaleManager
 from mindspore.train.callback import ModelCheckpoint, CheckpointConfig
 from mindspore.train.serialization import load_checkpoint, load_param_into_net
+from mindspore.profiler import Profiler
 
 from pinn.loss import Constraints
 from pinn.solver import Solver, LossAndTimeMonitor
-from pinn.common import L2
-from pinn.architecture import MultiScaleFCCell, MTLWeightedLossCell, FCSequential
+from pinn.architecture import SchrodingerNet
 
-from src import get_test_data, create_random_dataset
-from src.possion import PossionEquation
-from src import MultiStepLR, PredictCallback
+from src.dataset import get_test_data, create_random_dataset
+from src.callback import TlossCallback
+from src.schrodinger import Schrodinger
 
 
 set_seed(123456)
-np.random.seed(123456)
 
 
 def train(config):
@@ -48,48 +47,38 @@ def train(config):
     """training process"""
     # dataset
     elec_train_dataset = create_random_dataset(config)
-    train_dataset = elec_train_dataset.create_dataset(batch_size=config["train_batch_size"],
+    train_dataset = elec_train_dataset.create_dataset(batch_size=config["batch_size"],
                                                       shuffle=True,
-                                                      prebatched_data=True,
                                                       drop_remainder=True)
 
     steps_per_epoch = len(elec_train_dataset)
     print("check train dataset size: ", len(elec_train_dataset))
 
-    # define network
+    model = SchrodingerNet()
 
-    model = MultiScaleFCCell(config["input_size"],
-                             config["output_size"],
-                             layers=config["layers"],
-                             neurons=config["neurons"],
-                             input_scale=config["input_scale"],
-                             residual=config["residual"],
-                             weight_init=XavierUniform(gain=1),
-                             act="tanh",
-                             num_scales=config["num_scales"],
-                             amp_factor=config["amp_factor"],
-                             scale_factor=config["scale_factor"]
-                             )
-    model.to_float(mstype.float16)
-    mtl = MTLWeightedLossCell(num_losses=elec_train_dataset.num_dataset)
+    print("num_losses=", elec_train_dataset.num_dataset)
 
     # define problem
     train_prob = {}
     for dataset in elec_train_dataset.all_datasets:
-        print(dataset)
-        train_prob[dataset.name] = PossionEquation(model=model, config=config,
-                                                domain_name=dataset.name + "_points",
-                                                bc_name=dataset.name + "_points")
+        train_prob[dataset.name] = Schrodinger(model=model,
+                                               domain_name=dataset.name + "_points",
+                                               bc_name=dataset.name + "_points",
+                                               ic_name=dataset.name + "_points")
+    print("check problem: ", train_prob)
     train_constraints = Constraints(elec_train_dataset, train_prob)
 
     # optimizer
-    params = model.trainable_params() + mtl.trainable_params()
-    optim = nn.Adam(params, learning_rate=Tensor(config["lr"]))
+    params = model.trainable_params()
+    opt = nn.Momentum(params, learning_rate=config["lr"], momentum=0.9, weight_decay=0.0)
+    optim = nn.LARS(opt, epsilon=1e-08, coefficient=0.02)
+
+    if config["train_process_first"]:
+        optim = nn.Adam(params, learning_rate=config["lr"])
 
     if config["load_ckpt"]:
         param_dict = load_checkpoint(config["load_ckpt_path"])
         load_param_into_net(model, param_dict)
-        load_param_into_net(mtl, param_dict)
 
     # define solver
     solver = Solver(model,
@@ -97,25 +86,23 @@ def train(config):
                     mode="PINNs",
                     train_constraints=train_constraints,
                     test_constraints=None,
-                    metrics={'l2': L2(), 'distance': nn.MSE()},
-                    loss_fn=nn.MSELoss(),
-                    loss_scale_manager=DynamicLossScaleManager(),
-                    mtl_weighted_cell=mtl)
+                    amp_level="O3",
+                    )
     print("steps_per_epoch=", steps_per_epoch)
     loss_time_callback = LossAndTimeMonitor(steps_per_epoch)
     callbacks = [loss_time_callback]
     if config.get("train_with_eval", False):
         inputs, label = get_test_data(config["test_data_path"])
-        predict_callback = PredictCallback(model, inputs, label, config=config)
+        predict_callback = TlossCallback(model, inputs, label)
         callbacks += [predict_callback]
     if config["save_ckpt"]:
-        config_ck = CheckpointConfig(save_checkpoint_steps=10,
+        config_ck = CheckpointConfig(save_checkpoint_steps=config["save_checkpoint_steps"],
                                      keep_checkpoint_max=2)
-        ckpoint_cb = ModelCheckpoint(prefix='ckpt_possion',
+        ckpoint_cb = ModelCheckpoint(prefix='ckpt_schordinger',
                                      directory=config["save_ckpt_path"], config=config_ck)
         callbacks += [ckpoint_cb]
     print("callbacks=", callbacks)
-    solver.train(config["train_epoch"], train_dataset, callbacks=callbacks, dataset_sink_mode=True)
+    solver.train(config["train_epoch"], train_dataset, callbacks=callbacks)
 
 
 if __name__ == '__main__':
