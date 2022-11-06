@@ -36,7 +36,6 @@ from src.possion import PossionEquation
 from src import MultiStepLR, PredictCallback
 
 
-# 是否需要修改
 set_seed(123456)
 np.random.seed(123456)
 
@@ -72,18 +71,6 @@ def train(config):
                              scale_factor=config["scale_factor"]
                              )
     model.to_float(mstype.float16)
-    '''
-    model = FCSequential(in_channel=config["input_size"],
-                         out_channel=config["output_size"],
-                         layers=config["layers"],
-                         neurons=config["neurons"],
-                         residual=config["residual"],
-                         act="tanh",
-                         weight_init=XavierUniform(gain=1))
-    model.to_float(mstype.float32)
-    '''
-
-    print("num_losses=", elec_train_dataset.num_dataset)
     mtl = MTLWeightedLossCell(num_losses=elec_train_dataset.num_dataset)
 
     # define problem
@@ -93,7 +80,6 @@ def train(config):
         train_prob[dataset.name] = PossionEquation(model=model, config=config,
                                                 domain_name=dataset.name + "_points",
                                                 bc_name=dataset.name + "_points")
-    print("check problem: ", train_prob)
     train_constraints = Constraints(elec_train_dataset, train_prob)
 
     # optimizer
