@@ -16,8 +16,6 @@
 import os
 import json
 import time
-import sys
-from pathlib import Path
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -26,7 +24,7 @@ from mindspore.train.serialization import load_checkpoint, load_param_into_net
 
 import src.dataset
 
-from pinn.architecture import SchrodingerNet
+from pinn.architecture import MultiScaleFCCell
 
 context.set_context(mode=context.GRAPH_MODE, save_graphs=False, device_target="Ascend", save_graphs_path="./graph")
 
@@ -35,7 +33,19 @@ def evaluation(config):
     """evaluation"""
 
     # define network
-    model = SchrodingerNet()
+    model = MultiScaleFCCell(config["input_size"],
+                             config["output_size"],
+                             layers=config["layers"],
+                             neurons=config["neurons"],
+                             input_scale=config["input_scale"],
+                             residual=config["residual"],
+                             weight_init=XavierUniform(gain=1),
+                             act="tanh",
+                             num_scales=config["num_scales"],
+                             amp_factor=config["amp_factor"],
+                             scale_factor=config["scale_factor"]
+                             )
+    model.to_float(mindspore.float16)
 
     # load parameters
     param_dict = load_checkpoint(config["load_ckpt_path"])
