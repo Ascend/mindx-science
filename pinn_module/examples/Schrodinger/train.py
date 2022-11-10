@@ -25,11 +25,12 @@ from mindspore.common import set_seed
 from mindspore import context, Tensor, nn
 from mindspore.train.callback import ModelCheckpoint, CheckpointConfig
 from mindspore.train.serialization import load_checkpoint, load_param_into_net
-from mindspore.profiler import Profiler
+from mindspore.train import DynamicLossScaleManager
 
 from pinn.loss import Constraints
 from pinn.solver import Solver, LossAndTimeMonitor
-from pinn.architecture import SchrodingerNet
+from pinn.architecture import MultiScaleFCCell
+from pinn.common.lr_scheduler import MultiStepLR
 
 from src.dataset import get_test_data, create_random_dataset
 from src.callback import TlossCallback
@@ -49,12 +50,24 @@ def train(config):
     elec_train_dataset = create_random_dataset(config)
     train_dataset = elec_train_dataset.create_dataset(batch_size=config["batch_size"],
                                                       shuffle=True,
+                                                      drop_remainder=True,
                                                       drop_remainder=True)
 
     steps_per_epoch = len(elec_train_dataset)
     print("check train dataset size: ", len(elec_train_dataset))
 
-    model = SchrodingerNet()
+    model = MultiScaleFCCell(config["input_size"],
+                             config["output_size"],
+                             layers=config["layers"],
+                             neurons=config["neurons"],
+                             input_scale=config["input_scale"],
+                             residual=config["residual"],
+                             weight_init=XavierUniform(gain=1),
+                             act="tanh",
+                             num_scales=config["num_scales"],
+                             amp_factor=config["amp_factor"],
+                             scale_factor=config["scale_factor"]
+                             )
 
     print("num_losses=", elec_train_dataset.num_dataset)
 
@@ -70,11 +83,9 @@ def train(config):
 
     # optimizer
     params = model.trainable_params()
-    opt = nn.Momentum(params, learning_rate=config["lr"], momentum=0.9, weight_decay=0.0)
-    optim = nn.LARS(opt, epsilon=1e-08, coefficient=0.02)
-
-    if config["train_process_first"]:
-        optim = nn.Adam(params, learning_rate=config["lr"])
+    lr_scheduler = MultiStepLR(config["lr"],config["milestones"],config["lr_gamma"],steps_per_epoch,config["train_epoch"])
+    lr = lr_scheduler.get_lr()
+    optim = nn.Adam(params,learning_rate=Tensor(lr))
 
     if config["load_ckpt"]:
         param_dict = load_checkpoint(config["load_ckpt_path"])
@@ -86,7 +97,7 @@ def train(config):
                     mode="PINNs",
                     train_constraints=train_constraints,
                     test_constraints=None,
-                    amp_level="O3",
+                    loss_scale_manager=DynamicLossScaleManager()
                     )
     print("steps_per_epoch=", steps_per_epoch)
     loss_time_callback = LossAndTimeMonitor(steps_per_epoch)
@@ -102,7 +113,7 @@ def train(config):
                                      directory=config["save_ckpt_path"], config=config_ck)
         callbacks += [ckpoint_cb]
     print("callbacks=", callbacks)
-    solver.train(config["train_epoch"], train_dataset, callbacks=callbacks)
+    solver.train(config["train_epoch"], train_dataset, callbacks=callbacks, dataset_sink_mode=True)
 
 
 if __name__ == '__main__':
