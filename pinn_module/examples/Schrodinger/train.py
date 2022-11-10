@@ -82,9 +82,9 @@ def train(config):
 
     # optimizer
     params = model.trainable_params()
-    lr_scheduler = MultiStepLR(config["lr"],config["milestones"],config["lr_gamma"],steps_per_epoch,config["train_epoch"])
+    lr_scheduler = MultiStepLR(config["lr"], config["milestones"], config["lr_gamma"], steps_per_epoch, config["train_epoch"])
     lr = lr_scheduler.get_lr()
-    optim = nn.Adam(params,learning_rate=Tensor(lr))
+    optim = nn.Adam(params, learning_rate=Tensor(lr))
 
     if config["load_ckpt"]:
         param_dict = load_checkpoint(config["load_ckpt_path"])

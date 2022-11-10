@@ -38,6 +38,7 @@ def predict(mod, inp):
     pre = pre.asnumpy()
     return pre
 
+
 """evaluation"""
 
 config = json.load(open("./config.json"))
@@ -73,6 +74,7 @@ load_param_into_net(model, convert_ckpt_dict)
 uu, vv, pp = [], [], []
 tu, tv, tp = [], [], []
 pre_u, pre_v, pre_p = [], [], []
+l2_u, l2_v, l2_p = [], [], []
 
 # Plot the velocity distribution of the flow field:
 for t in range(0, 8):
@@ -105,6 +107,7 @@ for t in range(0, 8):
     for iu, eiu in enumerate(tu):
         uu.append(abs(abs(tu[iu] - pre_u[iu])))
     print(l2(uu) / l2(tu))
+    l2_u.append(l2(uu) / l2(tu))
     print(sum(uu))
     print(sum(uu) / len(uu))
     uu.clear()
@@ -121,6 +124,7 @@ for t in range(0, 8):
     for iv, eiv in enumerate(tv):
         vv.append(abs(abs(tv[iv] - pre_v[iv])))
     print(l2(vv) / l2(tv))
+    l2_v.append(l2(vv) / l2(tv))
     print(sum(vv))
     print(sum(vv) / len(vv))
     vv.clear()
@@ -137,12 +141,16 @@ for t in range(0, 8):
     print(axis_p)
 
     for ip, eip in enumerate(tp):
-        pp.append(abs(abs(tp[ip]-pre_p[ip])-axis_p))
-    print(l2(pp)/l2(tp))
+        pp.append(abs(abs(tp[ip] - pre_p[ip]) - axis_p))
+    print(l2(pp) / l2(tp))
+    l2_u.append(l2(pp) / l2(tp))
     print(sum(pp))
-    print(sum(pp)/len(pp))
+    print(sum(pp) / len(pp))
     pp.clear()
     tp.clear()
     pre_p.clear()
 
-
+print("average l2 error:")
+print("u:" + str(sum(l2_u) / len(l2_u)))
+print("v:" + str(sum(l2_v) / len(l2_v)))
+print("p:" + str(sum(l2_p) / len(l2_p)))
