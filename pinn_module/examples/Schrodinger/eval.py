@@ -23,7 +23,8 @@ from mindspore import context, Tensor, ops, nn
 from mindspore.train.serialization import load_checkpoint, load_param_into_net
 
 import src.dataset
-from src.architecture import Schrodinger_Net
+
+from pinn.architecture import Schrodinger_Net
 
 context.set_context(mode=context.GRAPH_MODE, save_graphs=False, device_target="Ascend", save_graphs_path="./graph")
 
