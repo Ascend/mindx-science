@@ -28,11 +28,11 @@ from mindspore.train import DynamicLossScaleManager
 from pinn.loss import Constraints
 from pinn.solver import Solver, LossAndTimeMonitor
 from pinn.common.lr_scheduler import MultiStepLR
+from pinn.architecture import Schrodinger_Net
 
 from src.dataset import get_test_data, create_random_dataset
 from src.callback import TlossCallback
 from src.schrodinger import Schrodinger
-from src.architecture import Schrodinger_Net
 
 
 set_seed(123456)
