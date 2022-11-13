@@ -23,8 +23,7 @@ from mindspore import context, Tensor, ops, nn
 from mindspore.train.serialization import load_checkpoint, load_param_into_net
 
 import src.dataset
-
-from pinn.architecture import MultiScaleFCCell
+from src.architecture import Schrodinger_Net
 
 context.set_context(mode=context.GRAPH_MODE, save_graphs=False, device_target="Ascend", save_graphs_path="./graph")
 
@@ -33,18 +32,7 @@ def evaluation(config):
     """evaluation"""
 
     # define network
-    model = MultiScaleFCCell(config["input_size"],
-                             config["output_size"],
-                             layers=config["layers"],
-                             neurons=config["neurons"],
-                             input_scale=config["input_scale"],
-                             residual=config["residual"],
-                             weight_init=XavierUniform(gain=1),
-                             act="tanh",
-                             num_scales=config["num_scales"],
-                             amp_factor=config["amp_factor"],
-                             scale_factor=config["scale_factor"]
-                             )
+    model = Schrodinger_Net()
     model.to_float(mindspore.float16)
 
     # load parameters
