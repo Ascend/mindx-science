@@ -27,12 +27,12 @@ from mindspore.train import DynamicLossScaleManager
 
 from pinn.loss import Constraints
 from pinn.solver import Solver, LossAndTimeMonitor
-from pinn.architecture import MultiScaleFCCell
 from pinn.common.lr_scheduler import MultiStepLR
 
 from src.dataset import get_test_data, create_random_dataset
 from src.callback import TlossCallback
 from src.schrodinger import Schrodinger
+from src.architecture import Schrodinger_Net
 
 
 set_seed(123456)
@@ -54,18 +54,7 @@ def train(config):
     steps_per_epoch = len(elec_train_dataset)
     print("check train dataset size: ", len(elec_train_dataset))
 
-    model = MultiScaleFCCell(config["input_size"],
-                             config["output_size"],
-                             layers=config["layers"],
-                             neurons=config["neurons"],
-                             input_scale=config["input_scale"],
-                             residual=config["residual"],
-                             weight_init=XavierUniform(gain=1),
-                             act="tanh",
-                             num_scales=config["num_scales"],
-                             amp_factor=config["amp_factor"],
-                             scale_factor=config["scale_factor"]
-                             )
+    model = Schrodinger_Net()
     model.to_float(mindspore.float16)
 
     print("num_losses=", elec_train_dataset.num_dataset)
