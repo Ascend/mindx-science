@@ -1338,7 +1338,7 @@ class IFFT1_SP(PrimitiveWithInfer):
     def __init__(self, s, origin):
         """Initialize IFFT1_SP"""
         self.init_prim_io_names(inputs=['x_re', 'x_im'], outputs=['y_re'])
-        self.add_prim_attr("cust_aicpu", "FFT_new2")
+        self.add_prim_attr("cust_aicpu", "FFT_new")
         self.origin = origin
         pass
 
@@ -1391,7 +1391,7 @@ class RFFT1_SP(PrimitiveWithInfer):
         """Initialize RFFT1_SP"""
         fft_rank = 1
         self.init_prim_io_names(inputs=['x'], outputs=['y_re', 'y_im'])
-        self.add_prim_attr("cust_aicpu", "FFT_new2")
+        self.add_prim_attr("cust_aicpu", "FFT_new")
         self.s = s
         self.modes = modes
         validator.check_value_type("s", s, [tuple], self.name)
@@ -1498,7 +1498,7 @@ class IFFT2_SP(PrimitiveWithInfer):
                 'x_im1',
                 'x_im2'],
             outputs=['y_re'])
-        self.add_prim_attr("cust_aicpu", "FFT_new2")
+        self.add_prim_attr("cust_aicpu", "FFT_new")
         self.origin = origin
         pass
 
@@ -1563,7 +1563,7 @@ class RFFT2_SP(PrimitiveWithInfer):
         self.init_prim_io_names(
             inputs=['x'], outputs=[
                 'y_re1', 'y_re2', 'y_im1', 'y_im2'])
-        self.add_prim_attr("cust_aicpu", "FFT_new2")
+        self.add_prim_attr("cust_aicpu", "FFT_new")
         self.s = s
         self.modes = modes
         validator.check_value_type("s", s, [tuple], self.name)
@@ -1684,7 +1684,7 @@ class IFFT3_SP(PrimitiveWithInfer):
                 'x_im3',
                 'x_im4'],
             outputs=['y_re'])
-        self.add_prim_attr("cust_aicpu", "FFT_new2")
+        self.add_prim_attr("cust_aicpu", "FFT_new")
         self.origin = origin
         pass
 
@@ -1764,7 +1764,7 @@ class RFFT3_SP(PrimitiveWithInfer):
                 'y_im2',
                 'y_im3',
                 'y_im4'])
-        self.add_prim_attr("cust_aicpu", "FFT_new2")
+        self.add_prim_attr("cust_aicpu", "FFT_new")
         self.s = s
         self.modes = modes
         validator.check_value_type("s", s, [tuple], self.name)
@@ -1874,7 +1874,7 @@ class IRFFT1_SP(PrimitiveWithInfer):
     def __init__(self, s, origin):
         """Initialize IRFFT1_SP"""
         fft_rank = 1
-        self.add_prim_attr("cust_aicpu", "FFT_new2")
+        self.add_prim_attr("cust_aicpu", "FFT_new")
         self.s = s
         self.origin = origin
         pass
@@ -1953,7 +1953,7 @@ class RFFT1_SP2(PrimitiveWithInfer):
     def __init__(self, s, modes):
         """Initialize RFFT1_SP2"""
         fft_rank = 1
-        self.add_prim_attr("cust_aicpu", "FFT_new2")
+        self.add_prim_attr("cust_aicpu", "FFT_new")
         self.s = s
         self.modes = modes
         pass
@@ -2006,7 +2006,7 @@ class IRFFT2_SP(PrimitiveWithInfer):
     def __init__(self, s, origin):
         """Initialize IRFFT2_SP"""
         fft_rank = 2
-        self.add_prim_attr("cust_aicpu", "FFT_new2")
+        self.add_prim_attr("cust_aicpu", "FFT_new")
         self.s = s
         self.origin = origin
         pass
@@ -2095,7 +2095,7 @@ class RFFT2_SP2(PrimitiveWithInfer):
     def __init__(self, s, modes):
         """Initialize RFFT2_SP2"""
         fft_rank = 2
-        self.add_prim_attr("cust_aicpu", "FFT_new2")
+        self.add_prim_attr("cust_aicpu", "FFT_new")
         self.s = s
         self.modes = modes
         pass
@@ -2158,7 +2158,7 @@ class IRFFT3_SP(PrimitiveWithInfer):
     def __init__(self, s, origin):
         """Initialize IRFFT3_SP"""
         fft_rank = 3
-        self.add_prim_attr("cust_aicpu", "FFT_new2")
+        self.add_prim_attr("cust_aicpu", "FFT_new")
         self.s = s
         self.origin = origin
         pass
@@ -2266,7 +2266,7 @@ class RFFT3_SP2(PrimitiveWithInfer):
     def __init__(self, s, modes):
         """Initialize RFFT3_SP2"""
         fft_rank = 3
-        self.add_prim_attr("cust_aicpu", "FFT_new2")
+        self.add_prim_attr("cust_aicpu", "FFT_new")
         self.s = s
         self.modes = modes
         pass
