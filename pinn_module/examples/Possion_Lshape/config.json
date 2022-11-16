@@ -34,6 +34,6 @@
     "summary_path" : "./summary",
     "method" : "polygon",
     "load_model_name" : "./ckpt/ckpt_possion_2-10000_10.ckpt",
-    "device_target": "NPU",
+    "device_target": "Ascend",
     "device_id": 0
 }

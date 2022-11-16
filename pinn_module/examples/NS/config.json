@@ -32,6 +32,6 @@
     "vision_path" : "./vision",
     "summary_path" : "./summary",
     "load_model_name" : "./ckpt/ckpt_NS_45-20000_4.ckpt",
-    "device_target" : "CPU",
+    "device_target" : "Ascend",
     "device_id": 0
 }

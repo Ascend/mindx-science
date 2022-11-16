@@ -32,4 +32,5 @@ def handle_data(num):
 
     return res_uv
 
-handle_data(5000)
+
+handle_data(4096)

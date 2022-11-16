@@ -48,7 +48,6 @@ def train(config):
     elec_train_dataset = create_random_dataset(config)
     train_dataset = elec_train_dataset.create_dataset(batch_size=config["batch_size"],
                                                       shuffle=True,
-                                                      drop_remainder=True,
                                                       drop_remainder=True)
 
     steps_per_epoch = len(elec_train_dataset)

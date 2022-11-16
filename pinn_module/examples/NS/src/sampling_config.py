@@ -18,7 +18,7 @@ from easydict import EasyDict as edict
 src_sampling_config = edict({
     'domain': edict({
         'random_sampling': True,
-        'size': 2500,
+        'size': 2048,
         'sampler': 'uniform'
     }),
     'IC': edict({
