@@ -80,7 +80,7 @@ class Schrodinger(Problem):
         
         dhx = self.concat((du_x, dv_x))
         dh1x = self.concat((du1_x, dv1_x))
-        return h - h1 + dhx - dh1x
+        return ops.Sqrt()(self.pow(h - h1, 2) + self.pow(dhx - dh1x, 2))
 
     @ms_function
     def initial_condition(self, *output, **kwargs):
