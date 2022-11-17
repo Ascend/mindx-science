@@ -45,8 +45,13 @@ class Schrodinger(Problem):
         h = output[0]
         du_xx = self.u_xx(data)
         dv_xx = self.v_xx(data)
-        du_t = self.grad(data, 1, 0, h)
-        dv_t = self.grad(data, 1, 1, h)
+        
+        tmp1 = self.grad(data, None, 0, h)
+        _, du_t = self.split(tmp1)
+        
+        tmp2 = self.grad(data, None, 1, h)
+        _, dv_t = self.split(tmp2)
+        
         h_2 = self.rs_t(self.pow(h, 2), 1)
         h2_s = self.split(h_2 * h)
         h2_u = h2_s[0]
@@ -60,13 +65,22 @@ class Schrodinger(Problem):
         data = kwargs[self.bc_name]
         data1 = data * Tensor(np.array([-1, 1]), mindspore.float32)
         h1 = self.model(data1)
-        du_x = self.grad(data, 0, 0, h)
-        dv_x = self.grad(data, 0, 1, h)
-        du1_x = self.grad(data1, 0, 0, h1)
-        dv1_x = self.grad(data1, 0, 1, h1)
+        
+        tmp1 = self.grad(data, None, 0, h)
+        du_x, _ = self.split(tmp1)
+        
+        tmp2 = self.grad(data, None, 1, h)
+        dv_x, _ = self.split(tmp2)
+        
+        tmp3 = self.grad(data1, None, 0, h1)
+        du1_x, _ = self.split(tmp3)
+        
+        tmp4 = self.grad(data1, None, 1, h1)
+        dv1_x, _ = self.split(tmp4)
+        
         dhx = self.concat((du_x, dv_x))
         dh1x = self.concat((du1_x, dv1_x))
-        return ops.Sqrt()(self.pow(h - h1, 2) + self.pow(dhx - dh1x, 2))
+        return h - h1 + dhx - dh1x
 
     @ms_function
     def initial_condition(self, *output, **kwargs):
@@ -76,3 +90,4 @@ class Schrodinger(Problem):
         sechx = self.split(sechic)[0]
         error0 = self.concat((2 * sechx, self.zero(sechx)))
         return h - error0
+
