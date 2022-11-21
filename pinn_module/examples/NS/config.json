@@ -25,13 +25,13 @@
     "milestones" : [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000, 16000, 17000, 18000, 19000],
     "lr_gamma" : 0.75,
     "train_epoch" : 20000,
-    "train_batch_size" : 2500,
+    "train_batch_size" : 2732,
     "test_batch_size" : 10240,
     "predict_interval" : 100,
     "show_variables_interval" : 100,
     "vision_path" : "./vision",
     "summary_path" : "./summary",
-    "load_model_name" : "./ckpt/ckpt_NS_45-20000_4.ckpt",
+    "load_model_name" : "./ckpt/ns.ckpt",
     "device_target" : "Ascend",
     "device_id": 0
 }

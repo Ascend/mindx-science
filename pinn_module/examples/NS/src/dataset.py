@@ -39,8 +39,7 @@ def create_train_dataset(config):
     src_region.set_name("src")
     src_region.set_sampling_config(create_config_from_edict(src_sampling_config))
 
-    geom_dict = {src_region: ["domain"],
-                 }
+    '''geom_dict = {src_region: ["domain"]}'''
 
     ob_xyt = ExistedDataConfig(name='ob_xyt',
                                data_dir=[config["train_data_path"][0]],
@@ -57,7 +56,7 @@ def create_train_dataset(config):
                               data_format="npy",
                               constraint_type="Equation")
 
-    dataset = SupervisedDataset(geom_dict, existed_data_list=[ob_xyt, ob_uv], label_data={"ob_uv": 3})
+    dataset = SupervisedDataset(existed_data_list=[ob_xyt, ob_uv], label_data={"ob_uv": 3})
     return dataset
 
 
