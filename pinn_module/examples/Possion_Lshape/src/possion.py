@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ============================================================================
-#pylint: disable=W0613
+# pylint: disable=W0613
 """
 2D Possion_equation problem
 """
@@ -39,27 +39,13 @@ class PossionEquation(Problem):
         bc_normal (str): The column name of normal direction vector corresponding to specified boundary.
         ic_name (str): The corresponding column name of data which governed by initial condition.
     """
+
     def __init__(self, model, config, domain_name=None, bc_name=None, bc_normal=None):
         super(PossionEquation, self).__init__()
         self.domain_name = domain_name
-        self.bc_name = bc_name
-        self.bc_normal = bc_normal
         self.model = model
         self.grad1 = SecondOrderGrad(self.model, 0, 0, 0)
         self.grad2 = SecondOrderGrad(self.model, 1, 1, 0)
-        self.grad = Grad(self.model)
-        self.reshape = ops.Reshape()
-        self.cast = ops.Cast()
-        self.mul = ops.Mul()
-        self.cast = ops.Cast()
-        self.split = ops.Split(1, 2)
-        self.concat = ops.Concat(1)
-        self.tile = ops.Tile()
-        self.num_edges = len(config["vertex_list"])
-        self.vertex_list = config["vertex_list"]
-        self.coord_min = config["coord_min"]
-        self.coord_max = config["coord_max"]
-        self.coord_mid = config["coord_mid"]
 
     @ms_function
     def governing_equation(self, *output, **kwargs):
@@ -73,4 +59,4 @@ class PossionEquation(Problem):
     @ms_function
     def boundary_condition(self, *output, **kwargs):
         """Dirichlet boundary condition"""
-        return self.cast(output[0], mstype.float32)
+        return output[0]

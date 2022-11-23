@@ -19,12 +19,12 @@ from easydict import EasyDict as edict
 polygon_sampling_config = edict({
     'domain': edict({
         'random_sampling': True,
-        'size': 3600,
+        'size': 3000,
         'sampler': 'uniform'
     }),
     'BC': edict({
         'random_sampling': True,
-        'size': 360,
+        'size': 751,
         'sampler': 'uniform',
         'with_normal': False
     })

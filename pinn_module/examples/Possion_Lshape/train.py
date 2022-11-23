@@ -25,6 +25,7 @@ from mindspore import context, Tensor, nn
 from mindspore.train import DynamicLossScaleManager
 from mindspore.train.callback import ModelCheckpoint, CheckpointConfig
 from mindspore.train.serialization import load_checkpoint, load_param_into_net
+import mindspore.common.dtype as mstype
 
 from pinn.loss import Constraints
 from pinn.solver import Solver, LossAndTimeMonitor

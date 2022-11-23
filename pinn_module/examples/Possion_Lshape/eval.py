@@ -52,8 +52,8 @@ def evaluation(config):
     param_dict = load_checkpoint(config["load_model_name"])
     convert_ckpt_dict = {}
     for _, param in model.parameters_and_names():
-        convert_name1 = "model.cell_list." + param.name
-        convert_name2 = "model.cell_list." + ".".join(param.name.split(".")[2:])
+        convert_name1 = "jac2.model.model.cell_list." + param.name
+        convert_name2 = "jac2.model.model.cell_list." + ".".join(param.name.split(".")[2:])
         for key in [convert_name1, convert_name2]:
             if key in param_dict:
                 convert_ckpt_dict[param.name] = param_dict[key]
