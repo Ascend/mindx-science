@@ -13,3 +13,6 @@
 # limitations under the License.
 # ============================================================================
 
+python -m onnxsim --overwrite-input-shape="19521,2" ./PINN/offline_inference/Poisson_pinn.onnx ./PINN/offline_inference/Poisson_pinn.onnx
+python -m onnxsim --overwrite-input-shape="51456,2" ./PINN/offline_inference/Schrodinger_pinn.onnx ./PINN/offline_inference/Schrodinger_pinn.onnx
+python -m onnxsim --overwrite-input-shape="355000,3" ./PINN/offline_inference/NS_pinn.onnx ./PINN/offline_inference/NS_pinn.onnx

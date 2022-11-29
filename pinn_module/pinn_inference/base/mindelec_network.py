@@ -1,9 +1,24 @@
+# Copyright 2022 Huawei Technologies Co., Ltd
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ============================================================================
+
 from mindspore import nn
 
 
-class Schrodinger_Net(nn.Cell):
+class SchrodingerNet(nn.Cell):
     def __init__(self):
-        super(Schrodinger_Net, self).__init__()
+        super(SchrodingerNet, self).__init__()
         self.fc1 = nn.Dense(2, 100, activation='tanh', weight_init='xavier_uniform')
         self.fc2 = nn.Dense(100, 100, activation='tanh', weight_init='xavier_uniform')
         self.fc3 = nn.Dense(100, 100, activation='tanh', weight_init='xavier_uniform')
@@ -19,7 +34,7 @@ class Schrodinger_Net(nn.Cell):
         return x
 
 
-def dict_transfer_Poisson(model, param_dict):
+def dict_transfer_poisson(model, param_dict):
     convert_ckpt_dict = {}
     for _, param in model.parameters_and_names():
         convert_name1 = "jac2.model.model.cell_list." + param.name
@@ -30,7 +45,7 @@ def dict_transfer_Poisson(model, param_dict):
     return convert_ckpt_dict
 
 
-def dict_transfer_NS(model, param_dict):
+def dict_transfer_ns(model, param_dict):
     convert_ckpt_dict = {}
     for _, param in model.parameters_and_names():
         convert_name1 = "jac2.model.model.cell_list." + param.name

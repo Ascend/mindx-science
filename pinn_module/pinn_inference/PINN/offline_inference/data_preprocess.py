@@ -13,3 +13,15 @@
 # limitations under the License.
 # ============================================================================
 
+import json
+import numpy as np
+from base.data_process import get_poisson_data, get_schrodinger_data, get_ns_data
+
+configs = json.load(open("./config.json"))
+
+Poisson_inputs, _ = get_poisson_data(configs["Poisson_data_path"])
+np.ascontiguousarray(Poisson_inputs).tofile(configs["Poisson_bin_path"])
+Schrodinger_inputs, _ = get_schrodinger_data(configs["Schrodinger_data_path"])
+np.ascontiguousarray(Schrodinger_inputs).tofile(configs["Schrodinger_bin_path"])
+NS_inputs, _ = get_ns_data(configs["NS_data_path"], 700000)
+np.ascontiguousarray(NS_inputs).tofile(configs["NS_bin_path"])

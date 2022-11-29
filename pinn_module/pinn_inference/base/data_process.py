@@ -1,29 +1,44 @@
+# Copyright 2022 Huawei Technologies Co., Ltd
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ============================================================================
+
 from scipy import io
 import numpy as np
 
 """data preprocess"""
 
 
-def get_Schrodinger_data(test_data_path):
+def get_schrodinger_data(test_data_path):
     """load labeled data for evaluation"""
     data = io.loadmat(test_data_path)
     t = data['tt'].flatten()
     x = data['x'].flatten()
-    Feature = data['uu']
-    Feature_u = np.real(Feature)
-    Feature_v = np.imag(Feature)
+    feature = data['uu']
+    feature_u = np.real(feature)
+    feature_v = np.imag(feature)
     features = []
     labels = []
-    for i in range(len(x)):
-        for j in range(len(t)):
+    for i, ei in enumerate(x):
+        for j, ej in enumerate(t):
             features.append([x[i], t[j]])
-            labels.append([Feature_u[i][j], Feature_v[i][j]])
+            labels.append([feature_u[i][j], feature_v[i][j]])
     features = np.array(features)
     labels = np.array(labels)
     return features, labels
 
 
-def get_Poisson_data(test_data_path):
+def get_poisson_data(test_data_path):
     """load labeled data for evaluation"""
     data = np.load(test_data_path)
     inputs = data['X_test']
@@ -31,15 +46,15 @@ def get_Poisson_data(test_data_path):
     return inputs, labels
 
 
-def get_NS_data(test_data_path, num):
+def get_ns_data(test_data_path, num):
     """put the labeled data in order"""
-    [x_train, y_train, t_train, u_train, v_train, p_train] = load_NS_data(test_data_path, num)
+    [x_train, y_train, t_train, u_train, v_train, p_train] = load_ns_data(test_data_path, num)
     res1 = np.hstack((x_train, y_train, t_train))
     res2 = np.hstack((u_train, v_train, p_train))
     return res1, res2
 
 
-def load_NS_data(test_data_path, num):
+def load_ns_data(test_data_path, num):
     """load labeled data for evaluation"""
     data = io.loadmat(test_data_path)
     u_s, p_s, t_s, x_s = data["U_star"], data["p_star"], data["t"], data["X_star"]
