@@ -35,18 +35,23 @@ conda env create -f ./baseline.yaml
 ### 3.3 数据准备
 - 数据集<br>
 在PINN_inference下创建data文件夹，在文件夹存放三个方程所用到的数据集。<br>
-对于泊松方程，从此[链接](https://mindx.sdk.obs.cn-north-4.myhuaweicloud.com/mindx_science/pinns/Poisson_Lshape_clean.npz)下载；<br>
-对于薛定谔方程，从此[链接](http://mindx.sdk.obs.cn-snorth-4.myhuaweicloud.com/mindx_science/pinns/NLS.mat)下载；<br>
-对于NS方程，从此[链接](https://mindx.sdk.obs.cn-north-4.myhuaweicloud.com/mindx_science/pinns/cylinder_nektar_wake.mat)下载；<br>
+对于泊松方程，从此[链接](https://mindx.sdk.obs.cn-north-4.myhuaweicloud.com/mindx_science/pinns/Poisson_Lshape_clean.npz) 下载；<br>
+对于薛定谔方程，从此[链接](http://mindx.sdk.obs.cn-snorth-4.myhuaweicloud.com/mindx_science/pinns/NLS.mat) 下载；<br>
+对于NS方程，从此[链接](https://mindx.sdk.obs.cn-north-4.myhuaweicloud.com/mindx_science/pinns/cylinder_nektar_wake.mat) 下载；<br>
 
 
 - 权重文件 <br>
 在PINN_inference下创建pretrained_models文件夹，在文件夹存放三个方程所用到的数据集。<br>
-对于泊松方程，从此[链接](https://mindx.sdk.obs.cn-north-4.myhuaweicloud.com/mindx_science/pinns/Poisson_Lshape_clean.npz)下载；<br>
-对于薛定谔方程，从此[链接](http://mindx.sdk.obs.cn-snorth-4.myhuaweicloud.com/mindx_science/pinns/NLS.mat)下载；<br>
-对于NS方程，从此[链接](https://mindx.sdk.obs.cn-north-4.myhuaweicloud.com/mindx_science/pinns/cylinder_nektar_wake.mat)下载；<br>
+对于泊松方程，从此[链接](https://mindx.sdk.obs.cn-north-4.myhuaweicloud.com/mindx_science/pinns/Poisson_Lshape_clean.npz) 下载；<br>
+对于薛定谔方程，从此[链接](http://mindx.sdk.obs.cn-snorth-4.myhuaweicloud.com/mindx_science/pinns/NLS.mat) 下载；<br>
+对于NS方程，从此[链接](https://mindx.sdk.obs.cn-north-4.myhuaweicloud.com/mindx_science/pinns/cylinder_nektar_wake.mat) 下载；<br>
 
 ## 4 推理说明
+
+首先请配置环境变量。将pinn_inference添加至python环境变量。
+
+    export PYTHONPATH=/{your path}/pinn_inference
+
 
 ### 4.1 baseline推理
 #### 4.1.1 在线推理
