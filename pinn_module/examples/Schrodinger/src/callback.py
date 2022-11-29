@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ============================================================================
-
 from mindspore.train.callback import Callback
 from mindspore import ops
 

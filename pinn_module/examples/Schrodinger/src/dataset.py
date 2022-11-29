@@ -33,8 +33,8 @@ def get_test_data(test_data_path):
     feature_v = np.imag(feature)
     features = []
     labels = []
-    for i, ei in enumerate(x):
-        for j, ej in enumerate(t):
+    for i in range(len(x)):
+        for j in range(len(t)):
             features.append([x[i], t[j]])
             labels.append([feature_u[i][j], feature_v[i][j]])
     features = Tensor(features, dtype=mindspore.float32)

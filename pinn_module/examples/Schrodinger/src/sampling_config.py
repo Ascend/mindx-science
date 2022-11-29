@@ -18,19 +18,23 @@ from easydict import EasyDict as edict
 
 line_config = edict({
         'domain': edict({
-            'size': 20000,
-            'random_sampling': False,
+            'size': 10000,
+            'random_sampling': True,
+            'sampler': 'uniform'
         }),
         'BC': edict({
-            'size': 100,
-            'random_sampling': False,
+            'size': 10000,
+            'random_sampling': True,
+            'sampler': 'uniform'
         }),
         'IC': edict({
-            'size': 100,
-            'random_sampling': False,
+            'size': 10000,
+            'random_sampling': True,
+            'sampler': 'uniform'
         }),
         'time': edict({
-            'size': 20000,
+            'size': 10000,
             'random_sampling': True,
+            'sampler': 'uniform'
         })
     })

@@ -21,14 +21,13 @@ from src.utils import load_training_data
 
 
 def handle_data(num):
-    prefix = "data/"
     [x_train, y_train, t_train, u_train, v_train, p_train] = load_training_data(num)
     res_uv = [x_train, y_train, t_train, u_train, v_train]
     rruv = np.hstack((x_train, y_train, t_train, u_train, v_train)).astype(np.float32)
     rr_out = np.hstack((u_train, v_train, p_train))
     rr1 = np.array(rruv[..., :-2]).astype(np.float32)
-    np.save(prefix + 'data_input.npy', rr1)
-    np.save(prefix + 'data_uv.npy', rruv)
+    np.save('data_input.npy', rr1)
+    np.save('data_uv.npy', rruv)
 
     return res_uv
 

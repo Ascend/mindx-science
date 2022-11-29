@@ -3,6 +3,32 @@
 #### 介绍
 pinn组件实现了求解正/逆偏微分方程的模块化通用工具包。其中通用模块包括：网络结构定义、数据采样生成、区域定义、损失函数生成及数据匹配、算子定义、求解器定义等。pinn组件还一并实现了求解含非线性项的一维含时Schrödinger方程、二维L型区域内的泊松方程、Navier-Stokes方程逆问题这三个偏微分方程，以作为参考样例
 
+#### 使用说明
+
+首先请配置环境变量,将pinn包根目录添加至python环境变量。
+
+    export PYTHONPATH=/{your path}/pinn_module
+
+- NS方程
+1. clone本仓库到本地
+2. 从此[链接](https://mindx.sdk.obs.cn-north-4.myhuaweicloud.com/mindx_science/pinns/cylinder_nektar_wake.mat) 下载数据，存放到examples/NS下。
+3. 执行examples/NS/handleData.py ,随机采样生成数据集（data_input.npy,data_uv.npy）。
+4. 配置config.json中的设备，训练轮数等。
+5. 执行train.py
+
+- Possion方程
+1. clone本仓库到本地
+2. 从此[链接](https://mindx.sdk.obs.cn-north-4.myhuaweicloud.com/mindx_science/pinns/Poisson_Lshape_clean.npz) 下载数据，存放到examples/Possion_Lshape下。
+3. 配置config.json中的设备，训练轮数等。
+4. 执行train.py
+
+- Schrodinger方程
+1. clone本仓库到本地
+2. 从此[链接](http://mindx.sdk.obs.cn-snorth-4.myhuaweicloud.com/mindx_science/pinns/NLS.mat) 下载数据，存放到examples/Schrodinger下。
+3. 配置config.json中的设备，训练轮数等。
+4. 执行train.py（执行策略为：第一次执行学习率为0.001，第二次执行学习率为0.0001.两次执行的milestones和epoch_num均为config默认）
+
+
 #### 软件架构
 包含使用样例examples与工具包pinn两个部分。目录树如下：
 
@@ -31,24 +57,3 @@ pinn组件实现了求解正/逆偏微分方程的模块化通用工具包。其
 -	Operators模块：部分需要的算子在此定义。
 -	Solver模块：包括求解器定义，偏微分方程问题定义等。
 
-#### 使用说明
-
-- NS方程
-1. clone本仓库到本地
-2. 从此[链接](https://mindx.sdk.obs.cn-north-4.myhuaweicloud.com/mindx_science/pinns/cylinder_nektar_wake.mat)下载数据，存放到examples/NS/data下。
-3. 执行examples/NS/handleData.py ,随机采样生成数据集（data_input.npy,data_uv.npy）到data目录下。
-4. （可选）执行examples/NS/showData.py,查看数据集的内容，数据类型。
-5. 配置config.json中的设备，训练轮数等。
-6. 执行train.py
-
-- Possion方程
-1. clone本仓库到本地
-2. 从此[链接](https://mindx.sdk.obs.cn-north-4.myhuaweicloud.com/mindx_science/pinns/Poisson_Lshape_clean.npz)下载数据，存放到examples/Possion_Lshape下。
-3. 配置config.json中的设备，训练轮数等。
-4. 执行train.py
-
-- Schrodinger方程
-1. clone本仓库到本地
-2. 从此[链接](http://mindx.sdk.obs.cn-snorth-4.myhuaweicloud.com/mindx_science/pinns/NLS.mat)下载数据，存放到examples/Schrodinger下。
-3. 配置config.json中的设备，训练轮数等。
-4. 执行train.py（执行策略为：第一次执行学习率为0.001，第二次执行学习率为0.0001.两次执行的milestones和epoch_num均为config默认）

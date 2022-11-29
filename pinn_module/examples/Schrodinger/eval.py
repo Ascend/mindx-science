@@ -23,8 +23,7 @@ from mindspore import context, Tensor, ops, nn
 from mindspore.train.serialization import load_checkpoint, load_param_into_net
 
 import src.dataset
-
-from pinn.architecture import Schrodinger_Net
+from pinn.architecture import SchrodingerNet
 
 context.set_context(mode=context.GRAPH_MODE, save_graphs=False, device_target="Ascend", save_graphs_path="./graph")
 
@@ -33,8 +32,7 @@ def evaluation(config):
     """evaluation"""
 
     # define network
-    model = Schrodinger_Net()
-    model.to_float(mindspore.float16)
+    model = SchrodingerNet()
 
     # load parameters
     param_dict = load_checkpoint(config["load_ckpt_path"])
@@ -44,8 +42,8 @@ def evaluation(config):
     inputs, label = src.dataset.get_test_data(config["test_data_path"])
     time_beg = time.time()
     predict = model(inputs)
-    print('example for 8000 to 8050:\n', np.concatenate((predict[8000:8050].asnumpy()
-                                                         , label[8000:8050].asnumpy()), axis=1))
+    print('example for 8000 to 8050:\n',
+          np.concatenate((predict[8000:8050].asnumpy(), label[8000:8050].asnumpy()), axis=1))
     print("predict total time: {} s".format(time.time() - time_beg))
 
     # get accuracy
@@ -131,7 +129,6 @@ def evaluation(config):
         aspect="auto",
     )
 
-    # 保存图片
     plt.show()
     fig.savefig("eval/result" + ".png")
 

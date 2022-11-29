@@ -17,8 +17,7 @@ import os
 import json
 import time
 
-import numpy as np
-
+import mindspore
 from mindspore.common import set_seed
 from mindspore import context, Tensor, nn
 from mindspore.train.callback import ModelCheckpoint, CheckpointConfig
@@ -27,38 +26,37 @@ from mindspore.train import DynamicLossScaleManager
 
 from pinn.loss import Constraints
 from pinn.solver import Solver, LossAndTimeMonitor
+from pinn.architecture import SchrodingerNet
 from pinn.common.lr_scheduler import MultiStepLR
-from pinn.architecture import Schrodinger_Net
 
 from src.dataset import get_test_data, create_random_dataset
 from src.callback import TlossCallback
-from src.schrodinger import Schrodinger
-
+from src.Schrodinger import Schrodinger
 
 set_seed(123456)
 
 
 def train(config):
-    # Static Graph
     context.set_context(mode=context.GRAPH_MODE, save_graphs=True, device_target=config["device_target"],
                         device_id=config["device_id"], save_graphs_path="./graph")
 
     """training process"""
-    # dataset
     elec_train_dataset = create_random_dataset(config)
     train_dataset = elec_train_dataset.create_dataset(batch_size=config["batch_size"],
                                                       shuffle=True,
+                                                      prebatched_data=True,
                                                       drop_remainder=True)
 
     steps_per_epoch = len(elec_train_dataset)
     print("check train dataset size: ", len(elec_train_dataset))
 
-    model = Schrodinger_Net()
+    model = SchrodingerNet()
+
     model.to_float(mindspore.float16)
 
     print("num_losses=", elec_train_dataset.num_dataset)
 
-    # define problem
+    '''define problem'''
     train_prob = {}
     for dataset in elec_train_dataset.all_datasets:
         train_prob[dataset.name] = Schrodinger(model=model,
@@ -68,9 +66,10 @@ def train(config):
     print("check problem: ", train_prob)
     train_constraints = Constraints(elec_train_dataset, train_prob)
 
-    # optimizer
     params = model.trainable_params()
-    lr_scheduler = MultiStepLR(config["lr"], config["milestones"], config["lr_gamma"], steps_per_epoch, config["train_epoch"])
+
+    lr_scheduler = MultiStepLR(config["lr"], config["milestones"], config["lr_gamma"], steps_per_epoch,
+                               config["train_epoch"])
     lr = lr_scheduler.get_lr()
     optim = nn.Adam(params, learning_rate=Tensor(lr))
 
@@ -78,7 +77,6 @@ def train(config):
         param_dict = load_checkpoint(config["load_ckpt_path"])
         load_param_into_net(model, param_dict)
 
-    # define solver
     solver = Solver(model,
                     optimizer=optim,
                     mode="PINNs",

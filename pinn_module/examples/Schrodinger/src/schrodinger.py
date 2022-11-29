@@ -37,12 +37,11 @@ class Schrodinger(Problem):
         self.zero = ops.ZerosLike()
         self.cosh = ops.Cosh()
         self.concat = ops.Concat(1)
-        self.rs = ops.ReduceSum()
 
     @ms_function
     def governing_equation(self, *output, **kwargs):
-        data = kwargs[self.domain_name]
         h = output[0]
+        data = kwargs[self.domain_name]
         du_xx = self.u_xx(data)
         dv_xx = self.v_xx(data)
         
@@ -53,9 +52,7 @@ class Schrodinger(Problem):
         _, dv_t = self.split(tmp2)
         
         h_2 = self.rs_t(self.pow(h, 2), 1)
-        h2_s = self.split(h_2 * h)
-        h2_u = h2_s[0]
-        h2_v = h2_s[1]
+        h2_u, h2_v = self.split(h_2 * h)
         r = self.concat((-dv_t + 0.5 * du_xx + h2_u, du_t + 0.5 * dv_xx + h2_v))
         return r
 

@@ -19,7 +19,7 @@ from scipy.io import loadmat
 
 
 def load_training_data(num):
-    data = loadmat("data/cylinder_nektar_wake.mat")
+    data = loadmat("cylinder_nektar_wake.mat")
     u_s, p_s, t_s, x_s = data["U_star"], data["p_star"], data["t"], data["X_star"]
     n, t = x_s.shape[0], t_s.shape[0]
     xx, yy = np.tile(x_s[:, 0:1], (1, t)), np.tile(x_s[:, 1:2], (1, t))

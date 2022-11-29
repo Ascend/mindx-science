@@ -19,7 +19,7 @@
     "save_ckpt_path" : "./ckpt",
     "load_ckpt_path" : "",
     "train_with_eval": false,
-    "train_data_path" : ["data/data_input.npy","data/data_uv.npy"],
+    "train_data_path" : ["data_input.npy","data_uv.npy"],
     "test_data_path" : "",
     "lr" : 0.005,
     "milestones" : [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000, 16000, 17000, 18000, 19000],
