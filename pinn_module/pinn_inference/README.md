@@ -42,9 +42,7 @@ conda env create -f ./baseline.yaml
 
 - 权重文件 <br>
 在PINN_inference下创建pretrained_models文件夹，在文件夹存放三个方程所用到的数据集。<br>
-对于泊松方程，从此[链接](https://mindx.sdk.obs.cn-north-4.myhuaweicloud.com/mindx_science/pinns/Poisson_Lshape_clean.npz) 下载；<br>
-对于薛定谔方程，从此[链接](http://mindx.sdk.obs.cn-snorth-4.myhuaweicloud.com/mindx_science/pinns/NLS.mat) 下载；<br>
-对于NS方程，从此[链接](https://mindx.sdk.obs.cn-north-4.myhuaweicloud.com/mindx_science/pinns/cylinder_nektar_wake.mat) 下载；<br>
+三个方程所需要的权重文件从此[链接](https://mindx.sdk.obs.cn-north-4.myhuaweicloud.com/mindx_science/pinns/pinn_ckpt.7z) 下载
 
 ## 4 推理说明
 
