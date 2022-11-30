@@ -1,0 +1,24 @@
+data:
+  train_path: ./data/piececonst_r241_N1024_smooth1.mat
+  test_path: ./data/piececonst_r241_N1024_smooth2.mat
+  ntrain: 1000
+  ntest: 100
+  r: 16
+  h: 16
+  batch_size: 20
+
+model:
+  name: fno2d
+  modes1: 12
+  modes2: 12
+  width: 32
+
+train:
+  mix_prec: true
+  epoch: 10
+  base_lr: 1.e-3
+  weight_decay: 1.e-4
+  scheduler_gamma: 0.5
+  decay_per_epoch: 100
+  profile: true
+  profiler_path: ./profiler/fno2d

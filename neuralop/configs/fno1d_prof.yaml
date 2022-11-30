@@ -1,0 +1,22 @@
+data:
+  train_path: ./data/burgers_data_R10.mat
+  test_path: ./data/burgers_data_R10.mat
+  ntrain: 1000
+  ntest: 100
+  sub: 32
+  batch_size: 20
+
+model:
+  name: fno1d
+  modes: 16
+  width: 64
+
+train:
+  mix_prec: true
+  epoch: 10
+  base_lr: 1.e-2
+  weight_decay: 1.e-4
+  scheduler_gamma: 0.5
+  decay_per_epoch: 50
+  profile: true
+  profiler_path: ./profiler/fno1d

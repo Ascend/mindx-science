@@ -1,0 +1,43 @@
+data:
+  train_path: ./data/NS_fft_Re500_T4000.npy
+  test_path: ./data/NS_fft_Re500_T4000.npy
+  Re: 500
+  offset: 0
+  ntrain: 400
+  ntest: 300
+  time_interval: 0.5
+  nx: 64
+  nt: 64
+  sub: 4
+  sub_t: 4
+  nx_data: 16 # nx // sub
+  nt_data: 9 # int(nt * t_interval) // sub_t + 1
+  shuffle: true
+  nx_eqn: 32
+  nt_eqn: 17
+  batch_size: 1
+
+model:
+  name: pino3d
+  layers: [32, 32, 32, 32, 32]
+  modes1: [8, 8, 8, 8]
+  modes2: [8, 8, 8, 8]
+  modes3: [8, 8, 8, 8]
+  fc_dim: 64
+  activation: tanh
+
+train:
+  mix_prec: true
+  epoch: 500
+  base_lr: 1.e-3
+  weight_decay: 1.e-4
+  ic_weight : 1.0
+  f_weight : 1.0
+  xy_weight : 5.0
+  num_data_iter: 4
+  num_eqn_iter: 1
+  # load_path: ckpt/ms/pino3d_pretrain.ckpt
+  save_per_epoch: 100
+  save_path: ckpt/ms/pino3d_pretrain
+  # save_path: ckpt/torch/pino3d_pretrain
+  profile: false

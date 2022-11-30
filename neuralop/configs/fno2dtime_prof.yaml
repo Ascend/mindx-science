@@ -1,0 +1,27 @@
+data:
+  train_path: ./data/NavierStokes_V1e-5_N1200_T20.mat 
+  test_path: ./data/NavierStokes_V1e-5_N1200_T20.mat 
+  ntrain: 1000
+  ntest: 100
+  batch_size: 20
+  nx: 64
+  sub: 4
+  t_in: 5
+  t: 3
+  step: 1
+
+model:
+  name: 'fno2dtime'
+  modes1: 4
+  modes2: 4
+  width: 20
+
+train:
+  mix_prec: true
+  epoch: 10
+  base_lr: 5.e-3
+  weight_decay: 1.e-4
+  scheduler_gamma: 0.5
+  decay_per_epoch: 100
+  profile: true
+  profiler_path: ./profiler/fno2dtime
