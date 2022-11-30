@@ -1,33 +1,31 @@
 # PINN工具包
 
 #### 介绍
-pinn组件实现了求解正/逆偏微分方程的模块化通用工具包。其中通用模块包括：网络结构定义、数据采样生成、区域定义、损失函数生成及数据匹配、算子定义、求解器定义等。pinn组件还一并实现了求解含非线性项的一维含时Schrödinger方程、二维L型区域内的泊松方程、Navier-Stokes方程逆问题这三个偏微分方程，以作为参考样例
+pinn组件实现了求解正/逆偏微分方程的模块化通用工具包。其中通用模块包括：网络结构定义、数据采样生成、区域定义、损失函数生成及数据匹配、算子定义、求解器定义等。pinn组件还一并实现了求解含非线性项的一维含时Schrödinger方程、二维L型区域内的泊松方程、Navier-Stokes方程逆问题这三个偏微分方程，以作为参考样例。
 
 #### 使用说明
 
-首先请配置环境变量,将pinn包根目录添加至python环境变量。
+在训练之前，首先请配置环境变量,将pinn_module添加至python环境变量。
 
     export PYTHONPATH=/{your path}/pinn_module
 
 - NS方程
-1. clone本仓库到本地
-2. 从此[链接](https://mindx.sdk.obs.cn-north-4.myhuaweicloud.com/mindx_science/pinns/cylinder_nektar_wake.mat) 下载数据，存放到examples/NS下。
-3. 执行examples/NS/handleData.py ,随机采样生成数据集（data_input.npy,data_uv.npy）。
-4. 配置config.json中的设备，训练轮数等。
-5. 执行train.py
+1. 从此[链接](https://mindx.sdk.obs.cn-north-4.myhuaweicloud.com/mindx_science/pinns/cylinder_nektar_wake.mat) 下载数据cylinder_nektar_wake.mat，存放到examples/NS下。
+2. 执行`python handle_data.py` ,随机采样生成数据集（data_input.npy,data_uv.npy）。
+3. 配置config.json中的设备，训练轮数等。
+4. 执行`python train.py`。
 
 - Possion方程
-1. clone本仓库到本地
-2. 从此[链接](https://mindx.sdk.obs.cn-north-4.myhuaweicloud.com/mindx_science/pinns/Poisson_Lshape_clean.npz) 下载数据，存放到examples/Possion_Lshape下。
-3. 配置config.json中的设备，训练轮数等。
-4. 执行train.py
+1. 从此[链接](https://mindx.sdk.obs.cn-north-4.myhuaweicloud.com/mindx_science/pinns/Poisson_Lshape_clean.npz) 下载数据Poisson_Lshape_clean.npz，存放到examples/Possion_Lshape下。
+2. 配置config.json中的设备，训练轮数等。
+3. 执行`python train.py`。
 
 - Schrodinger方程
-1. clone本仓库到本地
-2. 从此[链接](http://mindx.sdk.obs.cn-snorth-4.myhuaweicloud.com/mindx_science/pinns/NLS.mat) 下载数据，存放到examples/Schrodinger下。
-3. 配置config.json中的设备，训练轮数等。
-4. 分两次执行train.py，第一次执行：config默认
-5. 第二次执行，将config中"lr"改为0.0001，"load_ckpt"改为true，"load_ckpt_path"改为"./ckpt/{第一次执行得到的ckpt文件}"，其余参数保持默认
+1. 从此[链接](http://mindx.sdk.obs.cn-snorth-4.myhuaweicloud.com/mindx_science/pinns/NLS.mat) 下载数据NLS.mat，存放到examples/Schrodinger下。
+2. 配置config.json中的设备，训练轮数等。
+3. 第一次执行`python train.py`。
+4. 将config中"lr"改为0.0001，"load_ckpt"改为true，"load_ckpt_path"改为"./ckpt/第一次执行得到的ckpt文件"，其余参数保持默认。
+5. 第二次执行`python train.py`。
 
 
 #### 软件架构
