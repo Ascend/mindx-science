@@ -26,7 +26,8 @@ pinn组件实现了求解正/逆偏微分方程的模块化通用工具包。其
 1. clone本仓库到本地
 2. 从此[链接](http://mindx.sdk.obs.cn-snorth-4.myhuaweicloud.com/mindx_science/pinns/NLS.mat) 下载数据，存放到examples/Schrodinger下。
 3. 配置config.json中的设备，训练轮数等。
-4. 执行train.py（执行策略为：第一次执行学习率为0.001，第二次执行学习率为0.0001.两次执行的milestones和epoch_num均为config默认）
+4. 分两次执行train.py，第一次执行：config默认
+5. 第二次执行，将config中"lr"改为0.0001，"load_ckpt"改为true，"load_ckpt_path"改为"./ckpt/{第一次执行得到的ckpt文件}"，其余参数保持默认
 
 
 #### 软件架构
