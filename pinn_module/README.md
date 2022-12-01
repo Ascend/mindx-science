@@ -23,9 +23,7 @@ pinn组件实现了求解正/逆偏微分方程的模块化通用工具包。其
 - Schrodinger方程
 1. 从此[链接](http://mindx.sdk.obs.cn-snorth-4.myhuaweicloud.com/mindx_science/pinns/NLS.mat) 下载数据NLS.mat，存放到examples/Schrodinger下。
 2. 配置config.json中的设备，训练轮数等。
-3. 第一次执行`python train.py`。
-4. 将config中"lr"改为0.0001，"load_ckpt"改为true，"load_ckpt_path"改为"./ckpt/第一次执行得到的ckpt文件"，其余参数保持默认。
-5. 第二次执行`python train.py`。
+3. 执行`python train.py`。
 
 
 #### 软件架构
