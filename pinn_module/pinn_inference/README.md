@@ -8,7 +8,7 @@ pinn组件实现了求解正/逆偏微分方程的模块化通用工具包。其
 |--------------------------|-----------------
 | <center>mindspore-ascend | <center>1.7.0   |
 | <center>mindscience-mindelec-ascend       | <center>0.1.0rc1  |
-
+| <center>msame       | <center> 5.0.3.alpha001  |
 
 
 ## 3 环境准备
@@ -22,6 +22,7 @@ conda env create -f ./baseline.yaml
 ```
 . /usr/local/Ascend/ascend-toolkit/set_env.sh
 ```
+其中，ATC工具的安装可参考此[链接](https://support.huawei.com/enterprise/zh/doc/EDOC1100234054/1afd5b7d)；msame工具的安装可参考此[链接](https://gitee.com/ascend/tools/tree/master/msame)，msame.aarch64文件需要安装到PINN_inference目录下
 ### 3.2 第三方依赖包
 | 主要依赖包                               | 版本                |
 |-------------------------------------|-------------------
@@ -41,7 +42,7 @@ conda env create -f ./baseline.yaml
 
 
 - 权重文件 <br>
-在PINN_inference下创建pretrained_models文件夹，在文件夹存放三个方程所用到的数据集。<br>
+在PINN_inference下创建pretrained_models文件夹，在文件夹存放三个方程所用到的权重文件（包括pth文件和ckpt文件）。<br>
 三个方程所需要的权重文件从此[链接](https://mindx.sdk.obs.cn-north-4.myhuaweicloud.com/mindx_science/pinns/pinn_ckpt.7z) 下载
 
 ## 4 推理说明
@@ -53,22 +54,25 @@ conda env create -f ./baseline.yaml
 
 ### 4.1 baseline推理
 #### 4.1.1 在线推理
+在GPU服务器执行以下命令：
 ```
 python ./baseline/online_inference.py
 ```
 #### 4.1.2 离线推理
-(1) pth文件转onnx文件
+
+(1) 在GPU服务器上，将pth文件转onnx文件
 ```
 python ./baseline/offline_inference/pth2onnx.py
 ```
 
-(2) onnx文件在T4服务器上经过TensorRT进行推理，获得性能数据
+(2) 在T4服务器上将onnx文件经过TensorRT进行推理，获得性能数据
 ```
 bash ./baseline/offline_inference/onnx_infer.sh
 ```
 
 ### 4.2 PINN推理
 #### 4.2.1 在线推理
+在NPU训练服务器上执行以下命令：
 ```
 python ./PINN/online_inference.py
 ```
@@ -86,11 +90,11 @@ python ./PINN/online_inference.py
 python ./PINN/offline_inference/ckpt2mid.py
 ```
 
-- 若中间文件是ONNX文件，则需要使用onnxsim简化
+- 若中间文件是ONNX文件，则需要在装有onnx-simplifier的环境上，使用onnxsim简化
 ```
 bash ./PINN/offline_inference/onnx_sim.sh
 ```
-- 最后将生成的中间文件传输到对应的推理服务器上
+- 最后将生成的中间文件传输到推理服务器上
 
 (3) 在推理服务器上，使用ATC工具将中间文件转换为om文件
 ```
@@ -98,17 +102,17 @@ bash ./PINN/offline_inference/mid2om.sh
 ```
 注意：当中间文件为AIR文件时，--framwork设置为1；当中间文件为ONNX文件时，--framwork设置为5；--input_shape根据batch_size而设定
 
-(4) 数据前处理
+(4) 在推理服务器上进行数据前处理
 ```
 python ./PINN/offline_inference/data_preprocess.py
 ```
-(5) msame推理，得到性能数据
+(5) 在推理服务器上，使用msame推理，得到性能数据
 ```
 bash ./PINN/offline_inference/msame_inference.sh
 ```
-(6) 数据后处理，得到精度数据
+(6) 在推理服务器上进行数据后处理，得到精度数据
 ```
-# 首先需要把三个推理结果的txt文件移动到result目录下
+# 首先需要把三个推理结果的txt文件移动到result目录下，然后执行以下命令
 python ./PINN/offline_inference/data_postprocess.py
 ```
 ### 4.3 SDK推理
@@ -139,15 +143,16 @@ NPU服务器
 （2）推理精度计算公式为L2范数的相对误差，该指标越低代表推理越准确\
 （3）推理性能的单位是毫秒
 ### 5.2 离线推理
-| 方程         | ckpt权重文件精度↓                   | NPU推理精度↓                      | 推理误差损失            |GPU推理性能↑  |NPU推理性能↑
-|--------------------------|-------------------------------|-------------------------------|-------------------|---- | ---|
-| <center>Poisson    | <center>0.1043                | <center>0.1044                | <center>0.1%      |<center>0.42    |<center>1.40
-| <center>Schrodinger | <center>0.001686              | <center> 0.001925             | <center>14.17%    |<center>1.67    |<center>4.13
-| <center>NS       | <center>0.00474582, 0.0181725 | <center>0.00481012, 0.0183875 | <center>1.3%,1.1% |<center>61.6339 |<center>28.003
+| 方程         | ckpt权重文件精度↓                   | NPU推理精度↓ | 推理误差损失            |GPU推理性能↑  |NPU推理性能↑ |性能比较
+|--------------------------|-------------------------------|-------------------------------|-------------------|---- | ---| ---|
+| <center>Poisson    | <center>0.1043      | <center>0.1044   | <center>0.01%      |<center>0.42    |<center>1.40 | 0.42 * 4 > 1.40
+| <center>Schrodinger | <center>0.001686      | <center> 0.001925  | <center>0.03%    |<center>1.67    |<center>4.13 | 1.67 * 4 > 4.13
+| <center>NS| <center>0.00474582, 0.0181725 | <center>0.00481012, 0.0183875 | <center>0.07%,0.02% |<center>61.6339 |<center>28.003| 61.6339 * 4 > 28.003
+
 注：\
 （1）GPU推理的设备条件是单张NVIDIA V100 16GB显存GPU；NPU推理的设备条件是单张910A昇腾芯片\
 （2）推理精度计算公式为L2范数的相对误差，该指标越低代表推理越准确\
 （3）NPU推理精度工具为sdk，性能测试工具为msame\
-（3）推理误差损失计算公式=|NPU推理精度-ckpt推理精度|/ckpt权重文件精度 *100% \
+（3）推理误差损失计算公式=|NPU推理精度-ckpt推理精度| * 100% \
 （4）推理性能的单位是毫秒
 
