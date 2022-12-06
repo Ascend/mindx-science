@@ -35,7 +35,7 @@ from src.dataset import get_test_data, create_random_dataset
 from src.callback import TlossCallback
 from src.schrodinger import Schrodinger
 
-set_seed(123456)
+set_seed(12345)
 
 
 def train(config):
