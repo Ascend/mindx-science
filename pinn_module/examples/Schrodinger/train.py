@@ -24,6 +24,8 @@ from mindspore.train.callback import ModelCheckpoint, CheckpointConfig
 from mindspore.train.serialization import load_checkpoint, load_param_into_net
 from mindspore.train import DynamicLossScaleManager
 
+from mindelec.architecture import MTLWeightedLossCell
+
 from pinn.loss import Constraints
 from pinn.solver import Solver, LossAndTimeMonitor
 from pinn.architecture import SchrodingerNet
@@ -77,12 +79,15 @@ def train(config):
         param_dict = load_checkpoint(config["load_ckpt_path"])
         load_param_into_net(model, param_dict)
 
+    mtl = MTLWeightedLossCell(num_losses=elec_train_dataset.num_dataset)
+
     solver = Solver(model,
                     optimizer=optim,
                     mode="PINNs",
                     train_constraints=train_constraints,
                     test_constraints=None,
-                    loss_scale_manager=DynamicLossScaleManager()
+                    loss_scale_manager=DynamicLossScaleManager(),
+                    mtl_weighted_cell=mtl
                     )
     print("steps_per_epoch=", steps_per_epoch)
     loss_time_callback = LossAndTimeMonitor(steps_per_epoch)
