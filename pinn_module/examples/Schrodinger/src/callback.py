@@ -42,6 +42,6 @@ class TlossCallback(Callback):
             self.rs(ops.Pow()(label_h, 2), 0))
         print('h=', h)
         if h[0][0] < 0.00172:
-            file_name = str(cb_params.cur_epoch_num) + "result" + ".ckpt"
+            file_name = "epoch:" + str(cb_params.cur_epoch_num) + "_result" + ".ckpt"
             mindspore.save_checkpoint(save_obj=self.net, ckpt_file_name=file_name)
             run_context.request_stop()
