@@ -15,6 +15,8 @@
 from mindspore.train.callback import Callback
 from mindspore import ops
 
+import mindspore
+
 
 class TlossCallback(Callback):
     def __init__(self, net, feature, label):
@@ -25,6 +27,7 @@ class TlossCallback(Callback):
         self.rs = ops.ReduceSum(keep_dims=True)
 
     def epoch_end(self, run_context):
+        cb_params = run_context.original_args()
         predict = self.net(self.feature)
         result = ops.L2Loss()(predict - self.label)
         predict_h = ops.Sqrt()(self.rs(ops.Pow()(predict, 2), 1))
@@ -34,7 +37,11 @@ class TlossCallback(Callback):
             self.rs(ops.Pow()(predict - self.label, 2), 0) /
             self.rs(ops.Pow()(self.label, 2), 0))
               )
-        print('h=', ops.Sqrt()(
+        h = ops.Sqrt()(
             self.rs(ops.Pow()(predict_h - label_h, 2), 0) /
             self.rs(ops.Pow()(label_h, 2), 0))
-              )
+        print('h=', h)
+        if h[0][0] < 0.00172:
+            file_name = str(cb_params.cur_epoch_num) + "result" + ".ckpt"
+            mindspore.save_checkpoint(save_obj=self.net, ckpt_file_name=file_name)
+            run_context.request_stop()
