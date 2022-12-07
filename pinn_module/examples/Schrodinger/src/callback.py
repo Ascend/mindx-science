@@ -45,3 +45,4 @@ class TlossCallback(Callback):
             file_name = "epoch:" + str(cb_params.cur_epoch_num) + "_result" + ".ckpt"
             mindspore.save_checkpoint(save_obj=self.net, ckpt_file_name=file_name)
             run_context.request_stop()
+            print("successful training!")
