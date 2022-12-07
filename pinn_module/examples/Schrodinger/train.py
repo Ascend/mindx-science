@@ -24,8 +24,6 @@ from mindspore.train.callback import ModelCheckpoint, CheckpointConfig
 from mindspore.train.serialization import load_checkpoint, load_param_into_net
 from mindspore.train import DynamicLossScaleManager
 
-from mindelec.architecture import MTLWeightedLossCell
-
 from pinn.loss import Constraints
 from pinn.solver import Solver, LossAndTimeMonitor
 from pinn.architecture import SchrodingerNet
@@ -35,6 +33,8 @@ from src.dataset import get_test_data, create_random_dataset
 from src.callback import TlossCallback
 from src.schrodinger import Schrodinger
 
+from mindelec.architecture import MTLWeightedLossCell
+
 set_seed(12345)
 
 
@@ -42,7 +42,15 @@ def train(config):
     context.set_context(mode=context.GRAPH_MODE, save_graphs=True, device_target=config["device_target"],
                         device_id=config["device_id"], save_graphs_path="./graph")
 
-    """training process"""
+    model = SchrodingerNet()
+    model.to_float(mindspore.float16)
+    
+    if config["load_ckpt"]:
+        param_dict = load_checkpoint(config["load_ckpt_path"])
+        load_param_into_net(model, param_dict)
+    
+    
+    '''first process'''
     elec_train_dataset = create_random_dataset(config)
     train_dataset = elec_train_dataset.create_dataset(batch_size=config["batch_size"],
                                                       shuffle=True,
@@ -51,10 +59,6 @@ def train(config):
 
     steps_per_epoch = len(elec_train_dataset)
     print("check train dataset size: ", len(elec_train_dataset))
-
-    model = SchrodingerNet()
-
-    model.to_float(mindspore.float16)
 
     print("num_losses=", elec_train_dataset.num_dataset)
 
@@ -74,13 +78,8 @@ def train(config):
                                steps_per_epoch, config["train_epoch"])
     lr = lr_scheduler.get_lr()
     optim = nn.Adam(params, learning_rate=Tensor(lr))
-
-    if config["load_ckpt"]:
-        param_dict = load_checkpoint(config["load_ckpt_path"])
-        load_param_into_net(model, param_dict)
-
+    
     mtl = MTLWeightedLossCell(num_losses=elec_train_dataset.num_dataset)
-
     solver = Solver(model,
                     optimizer=optim,
                     mode="PINNs",
@@ -104,7 +103,6 @@ def train(config):
         callbacks += [ckpoint_cb]
     print("callbacks=", callbacks)
     solver.train(config["train_epoch"], train_dataset, callbacks=callbacks, dataset_sink_mode=True)
-
 
 if __name__ == '__main__':
     print("pid:", os.getpid())
