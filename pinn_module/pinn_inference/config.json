@@ -1,0 +1,43 @@
+{
+    "Description" : [ "PINN inference" ],
+
+    "note1" : "pretrained models(baseline, GPU)",
+    "Poisson_pth_path" : "./pretrained_models/Poisson.pth",
+    "Schrodinger_pth_path" : "./pretrained_models/Schrodinger.pth",
+    "NS_pth_path" : "./pretrained_models/NS.pth",
+
+    "note2" : "pretrained, models(PINN, NPU)",
+    "Poisson_ckpt_path" : "./pretrained_models/Poisson.ckpt",
+    "Schrodinger_ckpt_path" : "./pretrained_models/Schrodinger.ckpt",
+    "NS_ckpt_path" : "./pretrained_models/NS.ckpt",
+
+    "note3" : "data",
+    "Poisson_data_path" : "./data/Poisson_Lshape_clean.npz",
+    "Schrodinger_data_path" : "./data/NLS.mat",
+    "NS_data_path" : "./data/cylinder_nektar_wake.mat",
+    "Poisson_bin_path" : "./data/Poisson.bin",
+    "Schrodinger_bin_path" : "./data/Schrodinger.bin",
+    "NS_bin_path" : "./data/NS.bin",
+    "Poisson_result_path" : "./result/Poisson_output_0.txt",
+    "Schrodinger_result_path" : "./result/Schrodinger_output_0.txt",
+    "NS_result_path" : "./result/NS_output_0.txt",
+
+    "note4" : "onnx output dir for baseline",
+    "Poisson_onnx_deepxde" : "./baseline/offline_inference/Poisson_deepxde.onnx",
+    "Schrodinger_onnx_deepxde" : "./baseline/offline_inference/Schrodinger_deepxde.onnx",
+    "NS_onnx_deepxde" : "./baseline/offline_inference/NS_deepxde.onnx",
+
+    "note5" : "mid files output dir for PINN",
+    "Poisson_mid_pinn" : "./PINN/offline_inference/Poisson_pinn",
+    "Schrodinger_mid_pinn" : "./PINN/offline_inference/Schrodinger_pinn",
+    "NS_mid_pinn" : "./PINN/offline_inference/NS_pinn",
+
+    "note6" : "om output dir for PINN",
+    "Poisson_om_path" : "./PINN/offline_inference/Poisson.om",
+    "Schrodinger_om_path" : "./PINN/offline_inference/Schrodinger.om",
+    "NS_om_path" : "./PINN/offline_inference/NS.om",
+
+    "note7" : "Others",
+    "mid_file_format" : "ONNX",
+    "batch_size" : 1
+}
